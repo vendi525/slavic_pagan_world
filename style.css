@@ -10,7 +10,10 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #d1b399;
+            background-image: url('images/page-background.png'); /* replace with your image path */
+            background-size: cover;       /* makes the image cover the whole page */
+            background-repeat: no-repeat; /* prevents tiling */
+            background-position: center;
             color: var(--deep-brown);
             font-family: "Metamorphous", serif;
             font-weight: 400;
@@ -22,7 +25,7 @@
             text-align: center;
             width: 90%;
             margin: 0 auto;
-            max-width: 1000px;
+            max-width: 1600px;
         }
 
         h1 {
@@ -35,7 +38,7 @@
         /* Large square for your graphic */
         .graphic-area {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1600px;
             aspect-ratio: 16 / 9; /* This creates a cinematic rectangle shape */
             margin: 40px auto;
             background-color: var(--light-blue);
@@ -103,5 +106,12 @@
             margin-top: 20px;
             font-size: 0.8rem;
             opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .graphic-area {
+                width: 95%;
+                max-width: 95%;
+            }
         }
     </style>
