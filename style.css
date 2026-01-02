@@ -22,7 +22,7 @@
             text-align: center;
             width: 90%;
             margin: 0 auto;
-            max-width: 800px;
+            max-width: 1000px;
         }
 
         h1 {
@@ -35,7 +35,7 @@
         /* Large square for your graphic */
         .graphic-area {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             aspect-ratio: 16 / 9; /* This creates a cinematic rectangle shape */
             margin: 40px auto;
             background-color: var(--light-blue);
@@ -83,9 +83,7 @@
 
         .btn-preview {
             background-color: #ffffff;
-            color: var(--button-color);
-            border-width: 2px;
-            border-color: #523e2d;;
+            color: #523e2d;
         }
 
         .btn-preview:hover {
@@ -94,8 +92,6 @@
 
         .btn-download {
             background-color: #ffffff;
-            border-width: 2px;
-            border-color: #523e2d;
             color: #523e2d;
         }
 
