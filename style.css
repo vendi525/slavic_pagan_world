@@ -27,7 +27,13 @@
             margin: 0 auto;
             max-width: 1200px;
         }
-
+        .header-banner {
+             width: 100%;
+             padding: 20px 0; /* space above and below the headings */
+             background-color: rgba(255, 255, 255, 0.842); /* semi-transparent banner */
+             text-align: center; /* optional if your headings are centered */
+          border-radius: 8px; /* optional for soft edges */
+        }
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
