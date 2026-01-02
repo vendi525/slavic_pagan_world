@@ -1,0 +1,108 @@
+    <style>
+        /* CSS Variables for easy color changes */
+        :root {
+            --dark-beige: #d1b399;
+            --light-beige: #e8c9ae;
+            --deep-brown: #523e2d;
+            --button-color: #732b16;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-beige);
+            color: var(--deep-brown);
+            font-family: "Metamorphous", serif;
+            font-weight: 400;
+            font-style: normal;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Large square for your graphic */
+        .graphic-area {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* This creates a cinematic rectangle shape */
+            background-color: var(--light-blue);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* The graphic you will eventually add */
+        .graphic-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* The smaller square box in the middle */
+        .action-box {
+            position: absolute;
+            width: 250px;
+            padding: 20px;
+            background-color: rgba(23, 42, 69, 0.9); /* Slightly transparent */
+            border: 2px solid var(--button-color);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-preview {
+            background-color: transparent;
+            color: var(--button-color);
+            border: 1px solid var(--button-color);
+        }
+
+        .btn-preview:hover {
+            background-color: rgba(100, 255, 218, 0.1);
+        }
+
+        .btn-download {
+            background-color: var(--button-color);
+            color: var(--deep-blue);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+        }
+
+        p.footer-text {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+    </style>
