@@ -30,7 +30,7 @@
         .header-banner {
              width: 100%;
              padding: 20px 0; /* space above and below the headings */
-             background-color: rgba(255, 255, 255, 0.842); /* semi-transparent banner */
+             background-color: rgba(252, 250, 249, 0.74); /* semi-transparent banner */
              text-align: center; /* optional if your headings are centered */
           border-radius: 8px; /* optional for soft edges */
         }
@@ -68,9 +68,10 @@
         /* The smaller square box in the middle */
         .action-box {
             position: absolute;
-            width: 250px;
+            width: 40%;
+            max-width: 350px;
             padding: 20px;
-            background-color: rgba(82, 27, 5, 0.9); /* Slightly transparent */
+            background-color: #523e2d; /* Slightly transparent */
             border: 2px solid var(--button-color);
             border-radius: 4px;
             display: flex;
