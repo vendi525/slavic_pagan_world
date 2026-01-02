@@ -4,7 +4,7 @@
             --dark-beige: #d1b399;
             --light-beige: #e8c9ae;
             --deep-brown: #523e2d;
-            --button-color: #732b16;
+            --button-color: #ffffff;
         }
 
         body {
@@ -84,7 +84,8 @@
         .btn-preview {
             background-color: #ffffff;
             color: var(--button-color);
-            border: 1px solid var(--button-color);
+            border-width: 2px;
+            border-color: #523e2d;;
         }
 
         .btn-preview:hover {
@@ -93,6 +94,8 @@
 
         .btn-download {
             background-color: #ffffff;
+            border-width: 2px;
+            border-color: #523e2d;
             color: #523e2d;
         }
 
