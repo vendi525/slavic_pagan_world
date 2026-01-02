@@ -22,8 +22,7 @@
             text-align: center;
             width: 90%;
             margin: 0 auto;
-            max-width: 1800px;
-            min-height: 100vh;
+            max-width: 800px;
         }
 
         h1 {
@@ -36,8 +35,9 @@
         /* Large square for your graphic */
         .graphic-area {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             aspect-ratio: 16 / 9; /* This creates a cinematic rectangle shape */
+            margin: 40px auto;
             background-color: var(--light-blue);
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
