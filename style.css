@@ -24,7 +24,14 @@
             gap: 1.5rem;
         }
 
-        #cookie-banner button {
+        #cookie-banner .cookie--buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+    
+         #cookie-banner button {
             background: #ffffff;
             color: #5a0505;
             border: none;
@@ -32,7 +39,9 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 1.1rem;
             transition: background 0.3s, color 0.3s;
+            min-width: 120px;
         }
 
         #cookie-banner button:hover {
