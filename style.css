@@ -1,5 +1,5 @@
     <style>
-        /* CSS Variables for easy color changes */
+    
         :root {
             --dark-beige: #d1b399;
             --light-beige: #e8c9ae;
@@ -11,8 +11,8 @@
             margin: 0;
             padding: 0;
             background-image: url('images/page-background.png');
-            background-size: cover;       /* makes the image cover the whole page */
-            background-repeat: no-repeat; /* prevents tiling */
+            background-size: cover;       
+            background-repeat: no-repeat; 
             background-position: center;
             color: var(--deep-brown);
             font-family: "Metamorphous", serif;
@@ -29,10 +29,10 @@
         }
         .header-banner {
              width: 100%;
-             padding: 20px 0; /* space above and below the headings */
-             background-color: rgba(252, 250, 249, 0.74); /* semi-transparent banner */
-             text-align: center; /* optional if your headings are centered */
-          border-radius: 8px; /* optional for soft edges */
+             padding: 20px 0;
+             background-color: rgba(252, 250, 249, 0.74);
+             text-align: center;
+          border-radius: 8px; 
         }
         h1 {
             font-size: 2rem;
@@ -41,11 +41,10 @@
             text-transform: uppercase;
         }
 
-        /* Large square for your graphic */
         .graphic-area {
             width: 100%;
             max-width: 1200px;
-            aspect-ratio: 16 / 9; /* This creates a cinematic rectangle shape */
+            aspect-ratio: 16 / 9;
             margin: 40px auto;
             background-color: var(--light-blue);
             border-radius: 8px;
@@ -58,20 +57,18 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* The graphic you will eventually add */
         .graphic-area img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* The smaller square box in the middle */
         .action-box {
             position: absolute;
             width: 40%;
             max-width: 350px;
             padding: 20px;
-            background-color: #523e2d; /* Slightly transparent */
+            background-color: #523e2d;
             border: 2px solid var(--button-color);
             border-radius: 4px;
             display: flex;
@@ -111,14 +108,36 @@
 
         p.footer-text {
             margin-top: 20px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             opacity: 0.6;
         }
 
         @media (max-width: 768px) {
             .graphic-area {
-                width: 95%;
-                max-width: 95%;
+                width: 100vw;         
+                height: 100vw;         
+                max-width: none; 
             }
+
+            .graphic-area img {
+                width: 100%;
+                height: 300%;     
+                object-fit: cover;
+                object-position: center; 
+            }
+
+            .action-box {
+                width: 70%;             
+                max-width: none;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1rem;        
+            }
+
+            p.footer-text {
+            font-size: 0.8rem;
+        }
         }
     </style>
