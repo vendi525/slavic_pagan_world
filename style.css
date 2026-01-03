@@ -118,8 +118,9 @@
 
         @media (max-width: 768px) {
             .graphic-area {
-                width: 100vw;         
-                height: 100vw;         
+                width: 90%;
+                aspect-ratio: 9 / 16;      
+                height: auto;         
                 max-width: none; 
             }
 
