@@ -50,6 +50,12 @@
             letter-spacing: 2px;
         }
 
+        h3 {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
         .graphic-area {
             width: 100%;
             max-width: 1200px;
