@@ -136,6 +136,25 @@
                 width: 100%;
             }
 
+           .header-banner h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            .header-banner h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+            }
+
+            .header-banner h3 {
+                font-size: 1rem;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+            }
+            
             .graphic-area {
                 width: 90%;
                 aspect-ratio: 9 / 16;      
