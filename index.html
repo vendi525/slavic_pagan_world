@@ -106,14 +106,17 @@
        document.getElementById('cookie-banner').style.display = 'none';
     });
 
-    document.getElementById('download').addEventListener('click', function() {
-    if (!sessionStorage.getItem('downloaded') && window.gtag) {
-        gtag('event', 'file_download', {
-            file_name: 'files/slavic-calendar-2026.pdf',
-            file_type: 'pdf'
-            });
-        sessionStorage.setItem('downloaded', 'yes');
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('download');
+        downloadBtn.addEventListener('click', function() {
+            if (!sessionStorage.getItem('downloaded') && window.gtag) {
+                gtag('event', 'file_download', {
+                    file_name: 'files/slavic-calendar-2026.pdf',
+                    file_type: 'pdf'
+                });
+                sessionStorage.setItem('downloaded', 'yes');
+            }
+        });
     });
 
     document.getElementById('preview-desktop').addEventListener('click', function() {
