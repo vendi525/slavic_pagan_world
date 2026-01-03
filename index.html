@@ -109,11 +109,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const downloadBtn = document.getElementById('download');
         downloadBtn.addEventListener('click', function() {
-            console.log("sesionStorage", sessionStorage.getItem('downloaded'));
-            console.log("gtag", window.gtag);
-            console.log("if statement", !sessionStorage.getItem('downloaded') && window.gtag);
             if (!sessionStorage.getItem('downloaded') && window.gtag) {
-                console.log("Tracking download...");
                 gtag('event', 'file_download', {
                     file_name: 'files/slavic-calendar-2026.pdf',
                     file_type: 'pdf'
