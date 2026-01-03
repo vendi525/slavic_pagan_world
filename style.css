@@ -37,15 +37,6 @@
             border-radius: 8px;
         } 
 
-        .text-banner {
-            width: 90%;
-            padding: 20px 0;
-            margin: 40px auto;
-            background-color: rgba(252, 250, 249, 0.74);
-            text-align: center;
-            border-radius: 8px; 
-        }
-
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
@@ -57,6 +48,13 @@
             font-size: 1rem;
             margin-bottom: 20px;
             letter-spacing: 2px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            color: #ffffff;
         }
 
         .graphic-area {
