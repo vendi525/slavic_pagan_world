@@ -20,20 +20,22 @@
             box-sizing: border-box;
             z-index: 9999;
             display: flex;
-            flex-direction: colimn;
+            flex-direction: column;
             gap: 1.5rem;
         }
 
         #cookie-banner p {
             margin:0;
             font-size: 1.2rem;
-            test-align: center;
+            text-align: center;
         }
 
         #cookie-banner .cookie-buttons {
             display: flex;
             justify-content: center;
             gap: 1rem;
+            widht: 100%;
+            max-width: 600px;
         }
 
     
