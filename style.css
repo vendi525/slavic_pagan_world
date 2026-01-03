@@ -24,7 +24,13 @@
             gap: 1.5rem;
         }
 
-        #cookie-banner .cookie--buttons {
+        #cookie-banner p {
+            margin:0;
+            font-size: 1.2rem;
+            test-align: center;
+        }
+
+        #cookie-banner .cookie-buttons {
             display: flex;
             justify-content: center;
             gap: 1rem;
