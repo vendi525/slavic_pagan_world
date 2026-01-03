@@ -29,11 +29,11 @@
             max-width: 1200px;
         }
         .header-banner {
-             width: 100%;
-             padding: 20px 0;
-             background-color: rgba(252, 250, 249, 0.74);
-             text-align: center;
-          border-radius: 8px; 
+            width: 100%;
+            padding: 20px 0;
+            background-color: rgba(252, 250, 249, 0.74);
+            text-align: center;
+            border-radius: 8px; 
         }
         h1 {
             font-size: 2rem;
