@@ -88,6 +88,7 @@
             font-size: 0.9rem;
         }
 
+
         .btn-preview {
             background-color: #ffffff;
             color: #523e2d;
@@ -96,6 +97,8 @@
         .btn-preview:hover {
             background-color: rgb(212, 191, 170);
         }
+        
+        .preview-mobile { display: none; }
 
         .btn-download {
             background-color: #ffffff;
@@ -108,8 +111,8 @@
 
         p.footer-text {
             margin-top: 20px;
-            font-size: 0.9rem;
-            opacity: 0.6;
+            font-size: 1rem;
+            color: #523e2d
         }
 
         @media (max-width: 768px) {
@@ -132,12 +135,20 @@
                 padding: 15px;
             }
 
+            .preview-desktop {
+                display: none;
+            }
+
+            .preview-mobile {
+                display: inline-block;
+            }
+
             h2 {
                 font-size: 1rem;        
             }
 
             p.footer-text {
             font-size: 0.8rem;
-        }
+            }
         }
     </style>
