@@ -1,38 +1,39 @@
     <style>
-        
-        #cookie-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(66, 6, 6, 0.866);
-            color: #fff;
-            padding: 1rem;
-            text-align: center;
-            font-family: sans-serif;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        #cookie-banner button {
-            background: #ffffff;
-            color: #5f0505;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
+    
         :root {
             --dark-beige: #d1b399;
             --light-beige: #e8c9ae;
             --deep-brown: #523e2d;
             --button-color: #ffffff;
+        }   
+
+        #cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(77, 5, 5, 0.9);
+            color: white;
+            padding: 1rem;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            box-sizing: border-box;
         }
+
+        #cookie-banner button {
+            background: #ffffff;
+            color: #5a0505;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
 
         body {
             margin: 0;
