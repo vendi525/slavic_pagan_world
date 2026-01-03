@@ -22,6 +22,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            align-items: center;
         }
 
         #cookie-banner p {
@@ -33,9 +34,8 @@
         #cookie-banner .cookie-buttons {
             display: flex;
             justify-content: center;
-            align-items:center;
             gap: 1rem;
-            width: 100%;
+            width: auto;
             max-width: 600px;
         }
 
