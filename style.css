@@ -9,9 +9,9 @@
 
         #cookie-banner {
             position: fixed;
-            top: 50%;
+            bottom: 0;
             left: 0;
-            height: 50vh;
+            height: 30vh;
             width: 100%;
             background: rgba(77, 5, 5, 0.9);
             color: white;
