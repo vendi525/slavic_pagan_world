@@ -23,6 +23,7 @@
             flex-direction: column;
             gap: 1.5rem;
             align-items: center;
+            justify-content: center;
         }
 
         #cookie-banner p {
@@ -36,7 +37,6 @@
             justify-content: center;
             gap: 1rem;
             width: auto;
-            max-width: 600px;
         }
 
     
@@ -50,7 +50,7 @@
             font-weight: 600;
             font-size: 1.1rem;
             transition: background 0.3s, color 0.3s;
-            min-width: 120px;
+            min-width: 140px;
         }
 
         #cookie-banner button:hover {
