@@ -9,7 +9,7 @@
 
         #cookie-banner {
             position: fixed;
-            top: 0;
+            top: 50%;
             left: 0;
             height: 50vh;
             width: 100%;
