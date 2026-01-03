@@ -85,6 +85,9 @@
     });
 
     function loadGA4() {
+       if (window.GA4Loaded) return;
+       window.GA4Loaded = true;
+        
        const gaScript = document.createElement('script');
        gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1KZQ908ZL0";
        gaScript.async = true;
@@ -93,6 +96,7 @@
        gaScript.onload = () => {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
             gtag('js', new Date());
             gtag('config', 'G-1KZQ908ZL0');
         }
