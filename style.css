@@ -29,18 +29,34 @@
             max-width: 1200px;
         }
         .header-banner {
-            width: 100%;
+            width: 90%;
+            padding: 20px 0;
+            margin: 40px auto;
+            background-color: rgba(252, 250, 249, 0.74);
+            text-align: center;
+            border-radius: 8px;
+        } 
+
+        .text-banner {
+            width: 90%;
             padding: 20px 0;
             margin: 40px auto;
             background-color: rgba(252, 250, 249, 0.74);
             text-align: center;
             border-radius: 8px; 
         }
+
         h1 {
             font-size: 2rem;
             margin-bottom: 20px;
             letter-spacing: 2px;
             text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
         }
 
         .graphic-area {
@@ -118,6 +134,11 @@
         }
 
         @media (max-width: 768px) {
+            
+            .header-banner {
+                width: 100%;
+            }
+
             .graphic-area {
                 width: 90%;
                 aspect-ratio: 9 / 16;      
