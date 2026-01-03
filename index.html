@@ -12,7 +12,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+    <div id="cookie-banner">
+        <span>Are you okay with cookies?</span>
+        <button id="accept-cookies">It's fine</button>
+        <button id="reject-cookies">Sadly, no</button>
+    </div>
     <div class="container">
         <div class="header-banner">
             <h1>Slavic Pagan Calendar 2026</h1>
@@ -59,6 +63,38 @@
 
         <p class="footer-text">✨ New articles on myths and festivals coming soon. ✨</p>
     </div>
+    
+    <script>
+    
+    if (localStorage.getItem('cookiesAccepted') === 'yes') {
+        loadGA4();
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
 
+    document.getElementById('accept-cookies').addEventListener('click', function() {
+       localStorage.setItem('cookiesAccepted', 'yes');
+       loadGA4();
+       document.getElementById('cookie-banner').style.display = 'none';
+    });
+
+    document.getElementById('reject-cookies').addEventListener('click', function() {
+       localStorage.setItem('cookiesAccepted', 'no');
+       document.getElementById('cookie-banner').style.display = 'none';
+    });
+
+    function loadGA4() {
+       const gaScript = document.createElement('script');
+       gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1KZQ908ZL0";
+       gaScript.async = true;
+       document.head.appendChild(gaScript);
+
+       gaScript.onload = () => {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-1KZQ908ZL0');
+        }
+    }
+</script>
 </body>
 </html>
