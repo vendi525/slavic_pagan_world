@@ -294,7 +294,6 @@ a:hover { color: var(--accent-hover); }
 .newsletter-consent input { width: 1.15rem; height: 1.15rem; margin: 0.2rem 0 0; flex: none; accent-color: var(--accent); }
 
 .newsletter-website { position: absolute; left: -9999px; }
-.newsletter-note { color: var(--muted); }
 .newsletter-status { grid-column: 1 / -1; margin: 0; }
 .newsletter-status:empty { display: none; }
 

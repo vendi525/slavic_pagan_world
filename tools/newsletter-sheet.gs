@@ -11,6 +11,7 @@
 
 var FROM_NAME = "Slavic Pagan World";
 var TIME_ZONE = "Europe/Ljubljana";
+var SEND_DAY = 20; // the monthly email goes out on this day, covering next month
 
 // Fill these in only in the Apps Script copy. The repo is public, so keep them
 // empty there. If you paste this file in again, add them back.
@@ -22,7 +23,7 @@ var ROUTINE_SECRET = ""; // shared with the Claude routine; empty turns it off
 var UNSUBSCRIBE_PAGE = "https://slavicpaganworld.com/unsubscribe/";
 
 // Must match the wording on the website form.
-var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscribe anytime using the link in any email.";
+var CONSENT_WORDING = "Send me the upcoming Slavic holidays and rituals each month. I can unsubscribe anytime using the link in any email.";
 
 // ---- Edit these ------------------------------------------------------------
 
@@ -33,10 +34,6 @@ var BUSINESS_DETAILS = "[IZA: s.p. name and address]";
 // The article for this season, shown in both emails. Leave empty until there is one.
 var ARTICLE_TITLE = "";
 var ARTICLE_LINK = "";
-
-// The welcome email includes the current page after each monthly send.
-var CURRENT_PAGE_MONTH = ""; // for example "January"
-var CURRENT_PAGE_LINK = "";
 
 var WELCOME_SUBJECT = "welcome to the old Slavic year 🍂";
 
@@ -57,20 +54,12 @@ function videoBlock_() {
 }
 
 function welcomeText_() {
-  var pageMonth = setting_("CURRENT_PAGE_MONTH", CURRENT_PAGE_MONTH);
-  var pageLink = setting_("CURRENT_PAGE_LINK", CURRENT_PAGE_LINK);
-  var hasPage = pageMonth && pageLink;
   var parts = [
     "Hi, and welcome.",
-    "I'm Iza. I make slow videos about Slavic folklore, seasonal rituals and small handmade things, and I design the Slavic Pagan Calendar."
+    "I'm Iza. I make slow videos about Slavic folklore, seasonal rituals and small handmade things, and I design the Slavic Pagan Calendar.",
+    "Each month I'll send you the holidays and rituals coming up next month, with a short note on each one and the deities connected to them."
   ];
-  if (hasPage) {
-    parts.push("Here is your page for " + pageMonth + ":\n" + pageLink);
-    parts.push("A new page arrives a few days before each month.");
-  } else {
-    parts.push("In December you'll get your first page, for January. After that, a new page arrives a few days before each month, with a short note about that month's holiday and whatever I've been making.");
-  }
-  parts = parts.concat(articleBlock_(hasPage ? "Here's something for this time of year:" : "Until then, here's something for this time of year:"));
+  parts = parts.concat(articleBlock_("Here's something for this time of year:"));
   parts = parts.concat(videoBlock_());
   parts.push("If you'd like the whole year at once, the full 2027 calendar is on Etsy.\n" + ETSY_LINK);
   parts.push("Talk soon,\nIza");
@@ -105,12 +94,54 @@ function unsubscribeLink_(code) {
 }
 
 function sendEmail_(to, subject, text, code) {
+  var link = unsubscribeLink_(code);
   MailApp.sendEmail({
     to: to,
     subject: subject,
     name: FROM_NAME,
-    body: text + "\n\n--\n" + BUSINESS_DETAILS + "\nUnsubscribe: " + unsubscribeLink_(code)
+    body: plainText_(text) + "\n\n--\n" + BUSINESS_DETAILS + "\nUnsubscribe: " + link,
+    htmlBody: wrapHtml_(renderHtml_(text) +
+      '<p style="margin:32px 0 0;padding-top:16px;border-top:1px solid #d8c9b4;font-size:13px;color:#6d5848">' +
+      escapeHtml_(BUSINESS_DETAILS) + '<br><a href="' + escapeHtml_(link) + '" style="color:#6d5848">Unsubscribe</a></p>')
   });
+}
+
+// Emails are written in a small format:
+//   # Heading        **bold**        [[Button text|https://link]]
+//   Lines starting with a number are the holiday list.
+function escapeHtml_(text) {
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function inlineHtml_(line) {
+  return escapeHtml_(line)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#7a3b27">$1</a>');
+}
+
+function renderLine_(line) {
+  var button = line.match(/^\[\[(.+?)\|(.+)\]\]$/);
+  if (button && /^https?:\/\//.test(button[2])) {
+    return '<p style="margin:24px 0"><a href="' + escapeHtml_(button[2]) + '" style="display:inline-block;padding:12px 24px;background:#ebcb8b;color:#3a2a1e;border-radius:8px;text-decoration:none;font-weight:bold">' + escapeHtml_(button[1]) + '</a></p>';
+  }
+  if (button) return '<p style="margin:24px 0">' + escapeHtml_(button[1]) + ": " + escapeHtml_(button[2]) + '</p>';
+  if (line.indexOf("# ") === 0) {
+    return '<h1 style="margin:24px 0 16px;font-size:36px;line-height:1.2;font-weight:normal;color:#523e2d">' + escapeHtml_(line.slice(2)) + '</h1>';
+  }
+  if (/^\*{0,2}\d/.test(line)) return '<p style="margin:0 0 8px">' + inlineHtml_(line) + '</p>';
+  return '<p style="margin:0 0 16px">' + inlineHtml_(line) + '</p>';
+}
+
+function renderHtml_(text) {
+  return String(text).split("\n").filter(function (line) { return line.trim(); }).map(function (line) { return renderLine_(line.trim()); }).join("");
+}
+
+function wrapHtml_(inner) {
+  return '<div style="max-width:520px;margin:0 auto;font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#3a2a1e">' + inner + '</div>';
+}
+
+function plainText_(text) {
+  return String(text).replace(/^# /gm, "").replace(/\*\*/g, "").replace(/\[\[(.+?)\|(.+)\]\]/g, "$1: $2");
 }
 
 // Only you can run the sending functions, not visitors to the unsubscribe page.
@@ -251,11 +282,11 @@ function setupMonthlySend() {
 
 // ---- Monthly email ----------------------------------------------------------
 // The "Monthly emails" tab shows every month's draft, its status and what was sent.
-// Each month's email goes out on the 10th of the month before, once confirmed.
+// Each month's email goes out on SEND_DAY of the month before, once confirmed.
 
 var MONTHLY_TAB = "Monthly emails";
-var MONTHLY_HEADERS = ["Month", "Status", "Version", "Subject", "Body", "Month name", "Page link", "Last reply id", "Updated", "Confirmed", "Sent", "Recipients"];
-var M_ID = 0, M_STATUS = 1, M_VERSION = 2, M_SUBJECT = 3, M_BODY = 4, M_NAME = 5, M_PAGE = 6, M_REPLY = 7, M_UPDATED = 8, M_CONFIRMED = 9, M_SENT = 10, M_RECIPIENTS = 11;
+var MONTHLY_HEADERS = ["Month", "Status", "Version", "Subject", "Body", "Last reply id", "Updated", "Confirmed", "Sent", "Recipients"];
+var M_ID = 0, M_STATUS = 1, M_VERSION = 2, M_SUBJECT = 3, M_BODY = 4, M_REPLY = 5, M_UPDATED = 6, M_CONFIRMED = 7, M_SENT = 8, M_RECIPIENTS = 9;
 
 function monthlySheet_() {
   var book = SpreadsheetApp.getActiveSpreadsheet();
@@ -285,8 +316,10 @@ function targetMonth_() {
   return { id: next, day: Number(Utilities.formatDate(now, TIME_ZONE, "d")) };
 }
 
-function emailIza_(subject, text) {
-  MailApp.sendEmail({ to: REVIEW_EMAIL || Session.getEffectiveUser().getEmail(), subject: subject, name: FROM_NAME, body: text });
+function emailIza_(subject, text, html) {
+  var mail = { to: REVIEW_EMAIL || Session.getEffectiveUser().getEmail(), subject: subject, name: FROM_NAME, body: text };
+  if (html) mail.htmlBody = html;
+  MailApp.sendEmail(mail);
 }
 
 function missingNote_(body) {
@@ -298,12 +331,15 @@ function missingNote_(body) {
 
 function sendReview_(month, version, subject, body, note) {
   var isTest = month.indexOf("TEST") === 0;
-  emailIza_("Newsletter review " + month + " (version " + version + ")",
-    (isTest ? "This is a TEST and can never reach subscribers.\n\n" : "") +
+  var intro = (isTest ? "This is a TEST and can never reach subscribers.\n\n" : "") +
     "Reply with what you want changed, or reply with just the word confirmed." +
-    (isTest ? "" : " Once confirmed it goes out on the 10th.") +
-    (note ? "\n\nNote: " + note : "") + missingNote_(body) +
-    "\n\nSubject: " + subject + "\n\n-----\n" + body + "\n-----");
+    (isTest ? "" : " Once confirmed it goes out on the " + SEND_DAY + "th.") +
+    (note ? "\n\nNote: " + note : "") + missingNote_(body);
+  emailIza_("Newsletter review " + month + " (version " + version + ")",
+    intro + "\n\nSubject: " + subject + "\n\n-----\n" + plainText_(body) + "\n-----",
+    wrapHtml_('<div style="padding:16px;background:#f3ebdd;border-radius:8px;font-size:14px">' +
+      intro.split("\n\n").map(function (part) { return '<p style="margin:0 0 8px">' + escapeHtml_(part) + '</p>'; }).join("") +
+      '<p style="margin:0"><strong>Subject:</strong> ' + escapeHtml_(subject) + '</p></div>' + renderHtml_(body)));
 }
 
 // Called by the Claude routine. Nothing here can send to subscribers directly.
@@ -338,7 +374,7 @@ function routineAction_(params) {
       var subject = String(params.subject || ""), body = String(params.body || "");
       if (!subject || !body) return { ok: false, error: "missing text" };
       var version = row ? Number(row.values[M_VERSION]) + 1 : 1;
-      var values = [month, "draft", version, subject, body, String(params.monthName || ""), String(params.pageLink || ""), String(params.replyId || ""), new Date(), "", "", ""];
+      var values = [month, "draft", version, subject, body, String(params.replyId || ""), new Date(), "", "", ""];
       if (row) values.forEach(function (value, column) { sheet.getRange(row.number, column + 1).setValue(value); });
       else sheet.appendRow(values);
       if (month.indexOf("TEST") !== 0) {
@@ -363,7 +399,7 @@ function routineAction_(params) {
       sheet.getRange(row.number, M_STATUS + 1).setValue("confirmed");
       sheet.getRange(row.number, M_CONFIRMED + 1).setValue(new Date());
       emailIza_("Newsletter " + month + " confirmed",
-        (month.indexOf("TEST") === 0 ? "Test confirmed. Nothing will be sent." : "Locked in. It goes out on the 10th. Reply with a change before then if you want to reopen it.") + missingNote_(row.values[M_BODY]));
+        (month.indexOf("TEST") === 0 ? "Test confirmed. Nothing will be sent." : "Locked in. It goes out on the " + SEND_DAY + "th. Reply with a change before then if you want to reopen it.") + missingNote_(row.values[M_BODY]));
       return { ok: true };
     }
     return { ok: false, error: "unknown action" };
@@ -379,22 +415,22 @@ function remindOnce_(key, subject, text) {
   emailIza_(subject, text);
 }
 
-// Runs by itself every morning. Sends a confirmed email from the 10th onwards.
+// Runs by itself every morning. Sends a confirmed email from SEND_DAY onwards.
 function sendScheduledMonthly() {
   var target = targetMonth_();
-  if (target.day < 10) return;
+  if (target.day < SEND_DAY) return;
   var month = target.id;
   var monthly = monthlySheet_();
   var row = findMonth_(monthly, month);
 
   if (!row) {
-    remindOnce_("REMINDED_MISSING_" + month, "Newsletter " + month + " has no draft", "It's the 10th and there's no draft for " + month + ", so nothing went out. The Claude routine may have failed.");
+    remindOnce_("REMINDED_MISSING_" + month, "Newsletter " + month + " has no draft", "It's the " + SEND_DAY + "th and there's no draft for " + month + ", so nothing went out. The Claude routine may have failed.");
     return;
   }
   var status = row.values[M_STATUS];
   if (status === "sent") return;
   if (status !== "confirmed") {
-    remindOnce_("REMINDED_UNCONFIRMED_" + month, "Newsletter " + month + " is waiting for you", "It's the 10th and you haven't confirmed this email, so nothing went out. Reply to the review email with the word confirmed, or tell me what to change.");
+    remindOnce_("REMINDED_UNCONFIRMED_" + month, "Newsletter " + month + " is waiting for you", "It's the " + SEND_DAY + "th and you haven't confirmed this email, so nothing went out. Reply to the review email with the word confirmed, or tell me what to change.");
     return;
   }
   var subject = row.values[M_SUBJECT], body = row.values[M_BODY];
@@ -420,10 +456,5 @@ function sendScheduledMonthly() {
   }
   monthly.getRange(row.number, M_STATUS + 1).setValue("sent");
   monthly.getRange(row.number, M_SENT + 1).setValue(new Date());
-  var properties = PropertiesService.getScriptProperties();
-  if (row.values[M_NAME] && row.values[M_PAGE]) {
-    properties.setProperty("CURRENT_PAGE_MONTH", String(row.values[M_NAME]));
-    properties.setProperty("CURRENT_PAGE_LINK", String(row.values[M_PAGE]));
-  }
   emailIza_("Newsletter " + month + " sent", "Sent to " + sent + " subscribers.");
 }
