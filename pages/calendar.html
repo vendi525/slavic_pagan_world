@@ -6,7 +6,7 @@ permalink: /calendar/
 ---
 {% assign calendar = site.data.products.first %}
 <section class="hero">
-  {% include product-gallery.html product=calendar eager=true %}
+  {% include product-gallery.html product=calendar picks=",0,3,5,9," eager=true %}
   <div class="hero-text">
     <h1>{{ calendar.title }}</h1>
     <p class="hero-tagline">With myths and stories!</p>
