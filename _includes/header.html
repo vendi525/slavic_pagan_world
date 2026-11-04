@@ -1,0 +1,10 @@
+<header class="site-header">
+  <a class="site-name" href="/">{{ site.title }}</a>
+  <nav aria-label="Main menu">
+    <ul class="site-menu">
+      {% for item in site.data.navigation %}
+      <li><a href="{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>

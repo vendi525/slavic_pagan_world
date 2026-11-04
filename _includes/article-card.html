@@ -1,0 +1,10 @@
+<article class="article-card">
+  <a class="article-card-link" href="{{ include.url }}">
+    <img src="{{ include.image }}" alt="{{ include.image_alt }}" loading="lazy">
+    <div class="article-card-text">
+      <p class="article-meta">{{ include.category }} · {{ include.date }}</p>
+      <h3 class="article-title">{{ include.title }}</h3>
+      <p class="article-intro">{{ include.intro }}</p>
+    </div>
+  </a>
+</article>

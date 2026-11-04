@@ -1,0 +1,16 @@
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    {% include newsletter-box.html compact=true %}
+    <ul class="footer-links" aria-label="Find me elsewhere">
+      {% for item in site.data.links.social %}
+      <li><a href="{{ item.url }}">{{ item.label }}</a></li>
+      {% endfor %}
+    </ul>
+    <ul class="footer-links footer-links-small" aria-label="Legal">
+      {% for item in site.data.links.legal %}
+      <li><a href="{{ item.url }}">{{ item.label }}</a></li>
+      {% endfor %}
+    </ul>
+    <p class="footer-business">[IZA: s.p. name, address, tax number]</p>
+  </div>
+</footer>

@@ -1,0 +1,13 @@
+# [IZA: replace each "#" with the real link]
+social:
+  - label: YouTube
+    url: "#"
+  - label: Pinterest
+    url: "#"
+  - label: Etsy
+    url: "#"
+legal:
+  - label: Privacy
+    url: /privacy/
+  - label: Business info
+    url: /legal/

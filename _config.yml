@@ -1,0 +1,8 @@
+title: Slavic Pagan World
+url: https://slavicpaganworld.com
+markdown: kramdown
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

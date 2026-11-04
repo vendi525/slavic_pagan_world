@@ -1,0 +1,345 @@
+/* Slavic Pagan World: colours, fonts and shared pieces */
+
+@font-face {
+  font-family: "Lora";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/lora-italic-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/lora-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/lora-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/lora-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Metamorphous";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/metamorphous-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Metamorphous";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/metamorphous-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* Colours */
+  --bg: #523e2d;            /* the site's existing deep brown */
+  --surface: #624b39;       /* sections, footer, newsletter box */
+  --text: #f3ebdd;          /* warm cream */
+  --muted: #e0d2be;         /* captions, dates */
+  --card: #f7f2ea;          /* off-white behind artwork */
+  --ink: #3a2a1e;           /* text on gold and on off-white */
+  --accent: #ebcb8b;        /* pale gold */
+  --accent-hover: #f3dcae;
+  --folk: #7a3b27;          /* rust red from the calendar cover */
+
+  /* Fonts */
+  --font-display: "Metamorphous", Georgia, serif;
+  --font-text: "Lora", Georgia, serif;
+
+  /* Spacing and shape */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --radius: 8px;
+  --page-width: 68rem;
+  --text-width: 40rem;
+  --fade: 0.2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+/* Engravings fixed behind the page, with a soft lamp-like glow at the top */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(235, 203, 139, 0.06), transparent 70%),
+    linear-gradient(to bottom, transparent 40%, rgba(40, 28, 19, 0.35)),
+    url("../images/background-engravings.webp") center / cover no-repeat var(--bg);
+}
+
+img { display: block; max-width: 100%; height: auto; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  margin: 0 0 var(--space-2);
+}
+h1 { font-size: clamp(2rem, 7vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+h3 { font-size: 1.25rem; }
+
+p { margin: 0 0 var(--space-2); }
+
+a { color: var(--accent); transition: color var(--fade); }
+a:hover { color: var(--accent-hover); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.page {
+  width: 100%;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-2) var(--space-5);
+}
+
+/* Header */
+.site-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2) var(--space-2);
+  background: rgba(58, 42, 30, 0.55);
+  text-align: center;
+}
+.site-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-decoration: none;
+}
+.site-name:hover { color: var(--accent); }
+.site-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-menu a {
+  display: inline-block;
+  padding: 0.6rem 0.25rem; /* comfortable tap size */
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+.site-menu a:hover, .site-menu a[aria-current="page"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--fade), border-color var(--fade), color var(--fade);
+}
+.btn-primary { background: var(--accent); color: var(--ink); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--ink); }
+.btn-secondary { background: transparent; color: var(--accent); }
+.btn-secondary:hover { background: var(--accent); color: var(--ink); }
+
+/* Off-white card behind artwork */
+.art-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(40, 28, 19, 0.35);
+}
+.art-card-square { aspect-ratio: 1; }
+.art-card img { border-radius: 3px; }
+
+.tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  background: var(--folk);
+  color: var(--card);
+  font-size: 0.8rem;
+}
+
+/* Product card */
+.product-card { display: flex; flex-direction: column; align-items: flex-start; }
+.product-title { margin: var(--space-2) 0 0.35rem; }
+.product-line { margin-bottom: 0.35rem; color: var(--muted); }
+.product-price { margin-bottom: var(--space-2); font-weight: 600; }
+.product-card .btn { margin-top: auto; width: 100%; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-4) var(--space-3);
+}
+
+/* Newsletter box */
+.newsletter-box {
+  padding: var(--space-3) var(--space-2);
+  background: var(--surface);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.newsletter-title { font-size: clamp(1.3rem, 4.5vw, 1.6rem); }
+.newsletter-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+.newsletter-email input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.9rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 1rem;
+}
+.newsletter-email input::placeholder { color: #6d5848; }
+.newsletter-consent {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: left;
+}
+.newsletter-consent input { width: 1.15rem; height: 1.15rem; margin: 0.2rem 0 0; flex: none; accent-color: var(--accent); }
+
+/* Article card */
+.article-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; transition: background-color var(--fade); }
+.article-card:hover { background: #6a5240; }
+.article-card-link { display: block; height: 100%; color: inherit; text-decoration: none; }
+.article-card-link:hover { color: inherit; }
+.article-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.article-card-text { padding: var(--space-2); }
+.article-meta { margin-bottom: 0.35rem; color: var(--muted); font-size: 0.875rem; }
+.article-title { color: var(--text); }
+.article-intro { margin-bottom: 0; }
+
+/* Long reading text */
+.prose { max-width: var(--text-width); margin: 0 auto; font-size: 1.125rem; line-height: 1.75; }
+.prose h2 { margin-top: var(--space-4); }
+
+/* Ornamental divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+  font-size: 1.1rem;
+}
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: rgba(235, 203, 139, 0.45); }
+
+/* Footer */
+.site-footer { background: var(--surface); margin-top: var(--space-4); }
+.site-footer-inner {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+}
+.site-footer .newsletter-box { padding: 0 0 var(--space-3); background: none; }
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footer-links a { display: inline-block; padding: 0.5rem 0.25rem; font-family: var(--font-display); }
+.footer-links-small a { font-family: var(--font-text); font-size: 0.9rem; }
+.footer-business { margin: var(--space-1) 0 0; color: var(--muted); font-size: 0.875rem; }
+
+@media (min-width: 48rem) {
+  .page { padding-inline: var(--space-3); }
+  .site-menu { column-gap: var(--space-3); }
+  .site-header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--space-2) max(var(--space-3), calc((100% - var(--page-width)) / 2 + var(--space-3)));
+  }
+  .newsletter-box { padding: var(--space-4) var(--space-3); }
+  .newsletter-form { grid-template-columns: 1fr auto; max-width: 32rem; }
+  .newsletter-consent { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* Style preview page only */
+.preview-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }

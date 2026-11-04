@@ -1,0 +1,9 @@
+# The main menu. Pages get built in Phase 3.
+- label: Calendar
+  url: /calendar/
+- label: Shop
+  url: /shop/
+- label: Journal
+  url: /journal/
+- label: Newsletter
+  url: /newsletter/
