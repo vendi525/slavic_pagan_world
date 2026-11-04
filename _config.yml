@@ -1,7 +1,7 @@
 title: Slavic Pagan World
 url: https://slavicpaganworld.com
 markdown: kramdown
-newsletter_endpoint: "" # [IZA: the web app URL from the newsletter sheet]
+newsletter_endpoint: "https://script.google.com/macros/s/AKfycbxEVLCJFKEjDWVRIVebPwnLEn1mYXCuTCqgkHF6QuWbbL54Tlvnkm8eqZl4d-GOTH88mQ/exec"
 exclude:
   - README.md
   - Gemfile
