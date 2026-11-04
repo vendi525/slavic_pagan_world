@@ -10,9 +10,9 @@
 
 var FROM_NAME = "Slavic Pagan World";
 
-// Leave empty until the new site is live, then set to
-// "https://slavicpaganworld.com/unsubscribe/" so emails link to your own site.
-var UNSUBSCRIBE_PAGE = "";
+// The page in every email's unsubscribe link. This is the web app URL for now.
+// When the new site is live, change it to "https://slavicpaganworld.com/unsubscribe/".
+var UNSUBSCRIBE_PAGE = "https://script.google.com/macros/s/AKfycbxEVLCJFKEjDWVRIVebPwnLEn1mYXCuTCqgkHF6QuWbbL54Tlvnkm8eqZl4d-GOTH88mQ/exec";
 
 // Must match the wording on the website form.
 var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscribe anytime using the link in any email.";
@@ -48,7 +48,7 @@ function isValidEmail_(email) {
 }
 
 function unsubscribeLink_(code) {
-  return (UNSUBSCRIBE_PAGE || ScriptApp.getService().getUrl()) + "?u=" + encodeURIComponent(code);
+  return UNSUBSCRIBE_PAGE + "?u=" + encodeURIComponent(code);
 }
 
 function sendEmail_(to, subject, text, code) {
