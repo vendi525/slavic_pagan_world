@@ -10,4 +10,4 @@
   button_label: Order now
   url: /calendar/          # the product's own page
   etsy_url: "#"            # [IZA: Etsy listing link]
-  site_buy_url: "#"        # [IZA: on-site checkout link, must be real before launch]
+  site_buy_url: ""         # optional: own checkout link later. Empty means "Order now" goes to Etsy

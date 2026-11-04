@@ -75,6 +75,40 @@
     });
   });
 
+  document.querySelectorAll("[data-newsletter]").forEach(function (form) {
+    var status = form.querySelector(".newsletter-status");
+    var button = form.querySelector("button");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var endpoint = form.getAttribute("action");
+
+      if (form.elements.website.value) {
+        status.textContent = "Thank you, you're signed up.";
+        form.reset();
+        return;
+      }
+      if (!endpoint) {
+        status.textContent = "Signup isn't connected yet.";
+        return;
+      }
+
+      button.disabled = true;
+      status.textContent = "Sending...";
+      fetch(endpoint, { method: "POST", body: new URLSearchParams(new FormData(form)) })
+        .then(function (response) { return response.json(); })
+        .then(function (result) {
+          if (!result.ok) throw new Error("rejected");
+          status.textContent = "Thank you, you're signed up.";
+          form.reset();
+        })
+        .catch(function () {
+          status.textContent = "Something went wrong. Please try again.";
+        })
+        .finally(function () { button.disabled = false; });
+    });
+  });
+
   document.querySelectorAll(".video").forEach(function (video) {
     video.querySelector(".video-play").addEventListener("click", function () {
       var frame = document.createElement("iframe");

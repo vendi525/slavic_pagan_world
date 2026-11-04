@@ -1,11 +1,13 @@
 title: Slavic Pagan World
 url: https://slavicpaganworld.com
 markdown: kramdown
+newsletter_endpoint: "" # [IZA: the web app URL from the newsletter sheet]
 exclude:
   - README.md
   - Gemfile
   - Gemfile.lock
   - vendor
+  - tools
 permalink: /wiki/:title/
 defaults:
   - scope:

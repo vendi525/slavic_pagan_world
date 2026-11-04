@@ -20,7 +20,7 @@ permalink: /privacy/
 
 ## Newsletter
 
-[IZA: explain newsletter data. MailerLite will store the email address and consent, once it's connected in Phase 4.]
+[IZA: explain newsletter data. The email address, signup date and consent wording are saved in your Google Sheet, and you send the monthly page yourself by email. People can unsubscribe by replying, and you then delete their row.]
 
 ## Your rights
 

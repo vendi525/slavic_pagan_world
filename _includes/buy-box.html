@@ -1,9 +1,10 @@
 {% assign product = include.product %}
 <div class="buy-box">
+  {% comment %} With no site_buy_url, "Order now" goes to Etsy. {% endcomment %}
   {% if product.site_buy_url and product.site_buy_url != "" %}
   <a class="btn btn-primary" href="{{ product.site_buy_url }}">Order now</a>
   <a class="btn btn-secondary" href="{{ product.etsy_url }}">Buy on Etsy</a>
   {% else %}
-  <a class="btn btn-primary" href="{{ product.etsy_url }}">Buy on Etsy</a>
+  <a class="btn btn-primary" href="{{ product.etsy_url }}">Order now</a>
   {% endif %}
 </div>
