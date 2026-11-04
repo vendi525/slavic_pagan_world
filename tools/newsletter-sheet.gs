@@ -19,25 +19,23 @@ var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscr
 
 // ---- Edit these ------------------------------------------------------------
 
-// {{greeting}} becomes "Hi Ana," or just "Hi," if no name was given.
 var WELCOME_SUBJECT = "Welcome to Slavic Pagan World";
-var WELCOME_TEXT = "{{greeting}}\n\nThank you for signing up. Once a month I'll send you one free page from the Slavic Pagan Calendar, so look out for the next one.\n\nIf this email landed in spam, please mark it as not spam so the calendar pages reach you.\n\nIza\nSlavic Pagan World";
+var WELCOME_TEXT = "Hi there,\n\nThank you for signing up. Once a month I'll send you one free page from the Slavic Pagan Calendar, so look out for the next one.\n\nIf this email landed in spam, please mark it as not spam so the calendar pages reach you.\n\nIza\nSlavic Pagan World";
 
 // Change MONTHLY_ID for each new send, for example "2027-01". If a send stops
 // at the daily limit, running it again continues with whoever hasn't had it.
 var MONTHLY_ID = "[IZA: month, for example 2027-01]";
 var MONTHLY_SUBJECT = "[IZA: monthly email subject]";
-var MONTHLY_TEXT = "{{greeting}}\n\n[IZA: monthly email text, with a link to this month's calendar page]";
+var MONTHLY_TEXT = "Hi there,\n\n[IZA: monthly email text, with a link to this month's calendar page]";
 
 // ---- Sheet columns ---------------------------------------------------------
 
-var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent", "First name"];
-var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5, COL_NAME = 6; // positions in a row, from 0
+var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent"];
+var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5; // positions in a row, from 0
 
 function sheet_() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
-  else if (!sheet.getRange(1, COL_NAME + 1).getValue()) sheet.getRange(1, COL_NAME + 1).setValue(HEADERS[COL_NAME]);
   return sheet;
 }
 
@@ -49,24 +47,16 @@ function isValidEmail_(email) {
   return email.length <= 254 && /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email) && /^[A-Za-z0-9]/.test(email);
 }
 
-// Names go into emails, so only plain names are kept. This stops anyone using
-// the form to send links or other text through your account.
-function cleanName_(name) {
-  name = String(name || "").trim();
-  return /^\p{L}[\p{L} '’.-]{0,49}$/u.test(name) ? name : "";
-}
-
 function unsubscribeLink_(code) {
   return (UNSUBSCRIBE_PAGE || ScriptApp.getService().getUrl()) + "?u=" + encodeURIComponent(code);
 }
 
-function sendEmail_(to, subject, text, code, name) {
-  var greeting = name ? "Hi " + name + "," : "Hi,";
+function sendEmail_(to, subject, text, code) {
   MailApp.sendEmail({
     to: to,
     subject: subject,
     name: FROM_NAME,
-    body: text.replace("{{greeting}}", function () { return greeting; }) + "\n\n--\nUnsubscribe: " + unsubscribeLink_(code)
+    body: text + "\n\n--\nUnsubscribe: " + unsubscribeLink_(code)
   });
 }
 
@@ -106,11 +96,10 @@ function doPost(e) {
     var alreadySignedUp = rows.some(function (row) { return row[COL_EMAIL] === email; });
     if (!alreadySignedUp) {
       var code = Utilities.getUuid();
-      var name = cleanName_(params.name);
-      sheet.appendRow([new Date(), email, CONSENT_WORDING, code, "", "", name]);
+      sheet.appendRow([new Date(), email, CONSENT_WORDING, code, "", ""]);
       if (!hasPlaceholder_(WELCOME_SUBJECT + WELCOME_TEXT)) {
         try {
-          sendEmail_(email, WELCOME_SUBJECT, WELCOME_TEXT, code, name);
+          sendEmail_(email, WELCOME_SUBJECT, WELCOME_TEXT, code);
           sheet.getRange(rows.length + 1, COL_WELCOME + 1).setValue(new Date());
         } catch (error) {
           // The signup is saved. sendMissingWelcomes() can catch up later.
@@ -176,8 +165,8 @@ function unsubscribe(code) {
 function sendTestEmails() {
   assertOwner_();
   var me = Session.getEffectiveUser().getEmail();
-  sendEmail_(me, "TEST: " + WELCOME_SUBJECT, WELCOME_TEXT, "test", "Ana");
-  sendEmail_(me, "TEST: " + MONTHLY_SUBJECT, MONTHLY_TEXT, "test", "Ana");
+  sendEmail_(me, "TEST: " + WELCOME_SUBJECT, WELCOME_TEXT, "test");
+  sendEmail_(me, "TEST: " + MONTHLY_SUBJECT, MONTHLY_TEXT, "test");
 }
 
 // Sends the welcome email to anyone who signed up while it had placeholders.
@@ -189,7 +178,7 @@ function sendMissingWelcomes() {
   var sent = 0;
   for (var i = 1; i < rows.length; i++) {
     if (rows[i][COL_WELCOME] || MailApp.getRemainingDailyQuota() < 1) continue;
-    sendEmail_(rows[i][COL_EMAIL], WELCOME_SUBJECT, WELCOME_TEXT, rows[i][COL_CODE], rows[i][COL_NAME]);
+    sendEmail_(rows[i][COL_EMAIL], WELCOME_SUBJECT, WELCOME_TEXT, rows[i][COL_CODE]);
     sheet.getRange(i + 1, COL_WELCOME + 1).setValue(new Date());
     sent++;
   }
@@ -206,7 +195,7 @@ function sendMonthlyEmail() {
   for (var i = 1; i < rows.length; i++) {
     if (rows[i][COL_MONTHLY] === MONTHLY_ID) continue;
     if (MailApp.getRemainingDailyQuota() < 1) { remaining++; continue; }
-    sendEmail_(rows[i][COL_EMAIL], MONTHLY_SUBJECT, MONTHLY_TEXT, rows[i][COL_CODE], rows[i][COL_NAME]);
+    sendEmail_(rows[i][COL_EMAIL], MONTHLY_SUBJECT, MONTHLY_TEXT, rows[i][COL_CODE]);
     sheet.getRange(i + 1, COL_MONTHLY + 1).setValue(MONTHLY_ID);
     sent++;
   }

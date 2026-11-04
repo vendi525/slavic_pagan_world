@@ -271,7 +271,7 @@ a:hover { color: var(--accent-hover); }
   max-width: 28rem;
   margin: 0 auto;
 }
-.newsletter-name input, .newsletter-email input {
+.newsletter-email input {
   width: 100%;
   min-height: 3rem;
   padding: 0.6rem 0.9rem;
@@ -282,7 +282,7 @@ a:hover { color: var(--accent-hover); }
   font-family: var(--font-text);
   font-size: 1rem;
 }
-.newsletter-name input::placeholder, .newsletter-email input::placeholder { color: #6d5848; }
+.newsletter-email input::placeholder { color: #6d5848; }
 .newsletter-consent {
   display: flex;
   gap: 0.6rem;
@@ -354,7 +354,7 @@ a:hover { color: var(--accent-hover); }
   }
   .newsletter-box { padding: var(--space-4) var(--space-3); }
   .newsletter-form { grid-template-columns: 1fr auto; max-width: 32rem; }
-  .newsletter-name, .newsletter-consent { grid-column: 1 / -1; }
+  .newsletter-consent { grid-column: 1 / -1; }
 }
 
 [hidden] { display: none !important; }

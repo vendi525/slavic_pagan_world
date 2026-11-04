@@ -20,7 +20,7 @@ permalink: /privacy/
 
 ## Newsletter
 
-[IZA: explain newsletter data. The email address, first name if given, signup date and consent wording are saved in your Google Sheet, and emails are sent from your own Google account. The unsubscribe link in every email deletes the person's row.]
+[IZA: explain newsletter data. The email address, signup date and consent wording are saved in your Google Sheet, and emails are sent from your own Google account. The unsubscribe link in every email deletes the person's row.]
 
 ## Your rights
 
