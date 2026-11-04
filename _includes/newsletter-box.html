@@ -1,6 +1,7 @@
 {% comment %} Signups are saved to a Google Sheet, see tools/newsletter-sheet.gs. {% endcomment %}
 <section class="newsletter-box{% if include.compact %} newsletter-box-compact{% endif %}">
   <h2 class="newsletter-title">🍄 Get one calendar page free each month</h2>
+  {% if site.newsletter_note %}<p class="newsletter-note">{{ site.newsletter_note }}</p>{% endif %}
   <form class="newsletter-form" method="post" data-newsletter{% if site.newsletter_endpoint != "" %} action="{{ site.newsletter_endpoint }}"{% endif %}>
     <label class="newsletter-email">
       <span class="visually-hidden">Email address</span>
