@@ -1,0 +1,2 @@
+{% assign post_date = include.post.date | date: "%-d %B %Y" %}
+{% include article-card.html url=include.post.url image=include.post.cover image_alt=include.post.cover_alt category=include.post.topic date=post_date title=include.post.title intro=include.post.intro %}

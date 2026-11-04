@@ -1,11 +1,11 @@
 ---
 layout: default
 ---
-<h1>Journal</h1>
-<nav aria-label="Journal topics">
+<h1>Slavic Pagan Wiki</h1>
+<nav aria-label="Wiki topics">
   <ul class="topic-menu">
-    <li><a href="/journal/"{% if page.url == "/journal/" %} aria-current="page"{% endif %}>All</a></li>
-    {% for topic in site.data.journal_topics %}
+    <li><a href="/wiki/"{% if page.url == "/wiki/" %} aria-current="page"{% endif %}>All</a></li>
+    {% for topic in site.data.wiki_topics %}
     <li><a href="{{ topic.url }}"{% if page.url == topic.url %} aria-current="page"{% endif %}>{{ topic.label }}</a></li>
     {% endfor %}
   </ul>
@@ -13,10 +13,7 @@ layout: default
 {% if page.topic %}{% assign posts = site.posts | where: "topic", page.topic %}{% else %}{% assign posts = site.posts %}{% endif %}
 {% if posts.size > 0 %}
 <div class="card-grid">
-  {% for post in posts %}
-  {% assign post_date = post.date | date: "%-d %B %Y" %}
-  {% include article-card.html url=post.url image=post.cover image_alt=post.cover_alt category=post.topic date=post_date title=post.title intro=post.intro %}
-  {% endfor %}
+  {% for post in posts %}{% include post-card.html post=post %}{% endfor %}
 </div>
 {% else %}
 <p>✨ New articles on myths and festivals coming soon. ✨</p>

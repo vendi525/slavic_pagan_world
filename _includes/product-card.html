@@ -1,9 +1,6 @@
 {% assign product = include.product %}
 <article class="product-card">
-  <div class="art-card art-card-square">
-    {% if product.tag %}<span class="tag">{{ product.tag }}</span>{% endif %}
-    <img src="{{ product.image }}" alt="{{ product.image_alt }}" loading="lazy">
-  </div>
+  {% include product-gallery.html product=product picks=",0,3,5,9," %}
   <h3 class="product-title">{{ product.title }}</h3>
   <p class="product-line">{{ product.description }}</p>
   <p class="product-price">{{ product.price }}</p>

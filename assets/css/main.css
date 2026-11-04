@@ -60,7 +60,8 @@
   --surface: #624b39;       /* sections, footer, newsletter box */
   --text: #f3ebdd;          /* warm cream */
   --muted: #e0d2be;         /* captions, dates */
-  --card: #f7f2ea;          /* off-white behind artwork */
+  --card: #8a705a;          /* soft warm brown behind artwork */
+  --field: #f3ebdd;         /* form fields, light text on red */
   --ink: #3a2a1e;           /* text on gold and on off-white */
   --accent: #ebcb8b;        /* pale gold */
   --accent-hover: #f3dcae;
@@ -203,19 +204,32 @@ a:hover { color: var(--accent-hover); }
 .btn-secondary { background: transparent; color: var(--accent); }
 .btn-secondary:hover { background: var(--accent); color: var(--ink); }
 
-/* Off-white card behind artwork */
+/* Warm card behind artwork */
 .art-card {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: var(--space-2);
   background: var(--card);
   border-radius: var(--radius);
-  box-shadow: 0 6px 20px rgba(40, 28, 19, 0.35);
+  box-shadow: 0 6px 20px rgba(40, 28, 19, 0.3);
 }
-.art-card-square { aspect-ratio: 1; }
-.art-card img { border-radius: 3px; }
+.art-card img { width: 100%; border-radius: 3px; }
+.art-card :focus-visible { outline-color: var(--field); }
+
+/* Main image and example pages in one cell */
+.gallery-thumbs {
+  display: flex;
+  min-width: 0;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 3px 3px 0.35rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  list-style: none;
+}
+.gallery-thumbs li { flex: 0 0 5.5rem; scroll-snap-align: start; }
+.gallery-thumbs a { display: block; border-radius: 3px; opacity: 0.85; transition: opacity var(--fade); }
+.gallery-thumbs a:hover, .gallery-thumbs a[aria-current] { opacity: 1; }
+.gallery-thumbs a[aria-current] { outline: 2px solid var(--field); outline-offset: 1px; }
 
 .tag {
   position: absolute;
@@ -223,13 +237,15 @@ a:hover { color: var(--accent-hover); }
   left: 0.75rem;
   padding: 0.15rem 0.6rem;
   border-radius: 4px;
+  z-index: 1;
   background: var(--folk);
-  color: var(--card);
+  color: var(--field);
   font-size: 0.8rem;
 }
 
 /* Product card */
-.product-card { display: flex; flex-direction: column; align-items: flex-start; }
+.product-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.product-card .product-gallery { width: 100%; }
 .product-title { margin: var(--space-2) 0 0.35rem; }
 .product-line { margin-bottom: 0.35rem; color: var(--muted); }
 .product-price { margin-bottom: var(--space-2); font-weight: 600; }
@@ -261,7 +277,7 @@ a:hover { color: var(--accent-hover); }
   padding: 0.6rem 0.9rem;
   border: 2px solid transparent;
   border-radius: var(--radius);
-  background: var(--card);
+  background: var(--field);
   color: var(--ink);
   font-family: var(--font-text);
   font-size: 1rem;
@@ -343,15 +359,11 @@ a:hover { color: var(--accent-hover); }
 .section { margin-top: var(--space-5); }
 
 /* Top of the home and calendar pages: artwork first */
-.hero { display: grid; gap: var(--space-3); }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .hero-text > :last-child { margin-bottom: 0; }
 .hero-tagline { font-family: var(--font-display); font-size: 1.25rem; }
 .hero .btn { width: 100%; }
 .hero .product-price { margin-bottom: var(--space-2); }
-
-/* Grids of calendar pages */
-.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-.gallery .art-card { padding: var(--space-1); }
 
 /* Buying */
 .buy-box { display: grid; gap: 0.75rem; }
@@ -364,7 +376,7 @@ a:hover { color: var(--accent-hover); }
 .about-strip { padding: var(--space-3) var(--space-2); background: var(--surface); border-radius: var(--radius); text-align: center; }
 .about-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin: 0; }
 
-/* Journal topics */
+/* Wiki topics */
 .topic-menu { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); margin: 0 0 var(--space-3); padding: 0; list-style: none; }
 .topic-menu a { display: inline-block; padding: 0.5rem 0.25rem; font-family: var(--font-display); text-decoration: none; }
 .topic-menu a:hover, .topic-menu a[aria-current="page"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.35em; }
@@ -429,11 +441,9 @@ a:hover { color: var(--accent-hover); }
 .link-button:hover { color: var(--accent-hover); }
 
 @media (min-width: 48rem) {
-  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); align-items: center; }
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
   .hero .btn { width: auto; }
-  .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
-  .gallery-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .gallery .art-card { padding: var(--space-2); }
+  .gallery-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.75rem, 1fr)); overflow: visible; padding: 0; }
   .buy-box { display: flex; flex-wrap: wrap; gap: var(--space-2); }
   .buy-again .buy-box { justify-content: center; }
   .details { grid-template-columns: 1fr 1fr; gap: var(--space-4); }

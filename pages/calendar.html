@@ -6,23 +6,12 @@ permalink: /calendar/
 ---
 {% assign calendar = site.data.products.first %}
 <section class="hero">
-  <div class="art-card art-card-square">
-    <img src="{{ calendar.image }}" alt="{{ calendar.image_alt }}" fetchpriority="high">
-  </div>
+  {% include product-gallery.html product=calendar eager=true %}
   <div class="hero-text">
     <h1>{{ calendar.title }}</h1>
     <p class="hero-tagline">With myths and stories!</p>
     <p class="product-price">{{ calendar.price }}</p>
     {% include buy-box.html product=calendar %}
-  </div>
-</section>
-
-<section class="section">
-  <h2>Inside the calendar</h2>
-  <div class="gallery">
-    {% for month in site.data.calendar_pages %}
-    <a class="art-card art-card-square" href="{{ month.image }}"><img src="{{ month.image }}" alt="{{ month.alt }}" loading="lazy"></a>
-    {% endfor %}
   </div>
 </section>
 

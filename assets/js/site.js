@@ -59,6 +59,22 @@
     button.addEventListener("click", function () { banner.hidden = false; });
   });
 
+  document.querySelectorAll(".product-gallery").forEach(function (gallery) {
+    var main = gallery.querySelector(".gallery-main");
+    gallery.querySelectorAll(".gallery-thumbs a").forEach(function (thumb) {
+      thumb.addEventListener("click", function (event) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+        event.preventDefault();
+        main.src = thumb.href;
+        main.alt = thumb.querySelector("img").alt;
+        gallery.querySelectorAll(".gallery-thumbs a").forEach(function (other) {
+          other.removeAttribute("aria-current");
+        });
+        thumb.setAttribute("aria-current", "true");
+      });
+    });
+  });
+
   document.querySelectorAll(".video").forEach(function (video) {
     video.querySelector(".video-play").addEventListener("click", function () {
       var frame = document.createElement("iframe");
