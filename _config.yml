@@ -1,6 +1,8 @@
 title: Slavic Pagan World
 url: https://slavicpaganworld.com
 markdown: kramdown
+plugins:
+  - jekyll-feed
 newsletter_note: "Your first page arrives in December." # remove on December 1, 2026
 newsletter_endpoint: "https://script.google.com/macros/s/AKfycbxEVLCJFKEjDWVRIVebPwnLEn1mYXCuTCqgkHF6QuWbbL54Tlvnkm8eqZl4d-GOTH88mQ/exec"
 exclude:

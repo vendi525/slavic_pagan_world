@@ -1,14 +1,21 @@
 // Slavic Pagan World newsletter, run from a Google Sheet.
 // Saves signups, sends the welcome and monthly emails, and handles unsubscribes.
+// The monthly email is drafted by a scheduled Claude routine, which calls doPost.
 //
 // Setup: paste into Extensions > Apps Script in the sheet, then
 // Deploy > New deployment > Web app, Execute as: Me, Who has access: Anyone.
 // After changing this code, use Deploy > Manage deployments > Edit > New version.
 //
 // Emails containing "[IZA:" never go to subscribers. sendTestEmails() always
-// goes only to you, so you can check them first.
+// goes only to you, so you can check it first.
 
 var FROM_NAME = "Slavic Pagan World";
+var TIME_ZONE = "Europe/Ljubljana";
+
+// Fill these in only in the Apps Script copy. The repo is public, so keep them
+// empty there. If you paste this file in again, add them back.
+var REVIEW_EMAIL = "";   // where monthly drafts go for review
+var ROUTINE_SECRET = ""; // shared with the Claude routine; empty turns it off
 
 // The page in every email's unsubscribe link. It's on your own site because
 // Google's web app page fails for anyone signed in to several Google accounts.
@@ -27,37 +34,38 @@ var BUSINESS_DETAILS = "[IZA: s.p. name and address]";
 var ARTICLE_TITLE = "";
 var ARTICLE_LINK = "";
 
-// The welcome email changes by itself once these are filled in, from December 1.
+// The welcome email includes the current page after each monthly send.
 var CURRENT_PAGE_MONTH = ""; // for example "January"
 var CURRENT_PAGE_LINK = "";
 
-// Fill these in for each monthly email. Change MONTHLY_ID each time, for example
-// "2027-01". If a send stops at the daily limit, running it again continues with
-// whoever hasn't had it.
-var MONTHLY_ID = "[IZA: month, for example 2027-01]";
-var MONTH_NAME = "[IZA: month, for example January]";
-var MONTH_PAGE_LINK = "[IZA: link to this month's calendar page]";
-var HOLIDAY_NOTE = "[IZA: 2 to 4 sentences about this month's holiday]";
-
 var WELCOME_SUBJECT = "welcome to the old Slavic year 🍂";
 
+// The routine keeps the latest links here, so the welcome email stays current.
+// The values above are only used until it has saved some.
+function setting_(name, fallback) {
+  return PropertiesService.getScriptProperties().getProperty(name) || fallback;
+}
+
 function articleBlock_(intro) {
-  if (!ARTICLE_LINK) return [];
-  return [intro + "\n" + ARTICLE_TITLE + "\n" + ARTICLE_LINK];
+  var link = setting_("ARTICLE_LINK", ARTICLE_LINK);
+  if (!link) return [];
+  return [intro + "\n" + setting_("ARTICLE_TITLE", ARTICLE_TITLE) + "\n" + link];
 }
 
 function videoBlock_() {
-  return ["For a glimpse of my lifestyle, watch my most recent YouTube video.\n" + VIDEO_LINK];
+  return ["For a glimpse of my lifestyle, watch my most recent YouTube video.\n" + setting_("VIDEO_LINK", VIDEO_LINK)];
 }
 
 function welcomeText_() {
-  var hasPage = CURRENT_PAGE_MONTH && CURRENT_PAGE_LINK;
+  var pageMonth = setting_("CURRENT_PAGE_MONTH", CURRENT_PAGE_MONTH);
+  var pageLink = setting_("CURRENT_PAGE_LINK", CURRENT_PAGE_LINK);
+  var hasPage = pageMonth && pageLink;
   var parts = [
     "Hi, and welcome.",
     "I'm Iza. I make slow videos about Slavic folklore, seasonal rituals and small handmade things, and I design the Slavic Pagan Calendar."
   ];
   if (hasPage) {
-    parts.push("Here is your page for " + CURRENT_PAGE_MONTH + ":\n" + CURRENT_PAGE_LINK);
+    parts.push("Here is your page for " + pageMonth + ":\n" + pageLink);
     parts.push("A new page arrives a few days before each month.");
   } else {
     parts.push("In December you'll get your first page, for January. After that, a new page arrives a few days before each month, with a short note about that month's holiday and whatever I've been making.");
@@ -67,88 +75,6 @@ function welcomeText_() {
   parts.push("If you'd like the whole year at once, the full 2027 calendar is on Etsy.\n" + ETSY_LINK);
   parts.push("Talk soon,\nIza");
   return parts.join("\n\n");
-}
-
-function monthlySubject_() {
-  return "your " + MONTH_NAME + " page is here";
-}
-
-function monthlyText_() {
-  var parts = ["Hi,", "Here is your calendar page for " + MONTH_NAME + ".\n" + MONTH_PAGE_LINK, HOLIDAY_NOTE];
-  parts = parts.concat(articleBlock_("Something for this time of year:"));
-  parts = parts.concat(videoBlock_());
-  parts.push("See the full calendar:\n" + ETSY_LINK);
-  parts.push("Talk soon,\nIza");
-  return parts.join("\n\n");
-}
-
-// ---- Reminders --------------------------------------------------------------
-// Emails you what to do and when. Run setupReminders once to start them. They go
-// to the address in Project Settings > Script Properties > REMINDER_EMAIL, or to
-// this account if that isn't set.
-
-var ONCE_REMINDERS = {
-  "2026-12-01": ["Add January page to the welcome email", [
-    "Put the January PDF on the site",
-    "Fill in CURRENT_PAGE_MONTH and CURRENT_PAGE_LINK in the script",
-    "Publish it: Deploy > Manage deployments > pencil > New version",
-    "Fill in the monthly email details and run sendMonthlyEmail so existing subscribers get January",
-    "Remove the 'first page in December' line from the website"
-  ]]
-};
-
-var MONTHLY_REMINDER = ["Send the monthly newsletter", [
-  "Put next month's PDF on the site",
-  "Write the holiday note",
-  "Update MONTHLY_ID, MONTH_NAME, MONTH_PAGE_LINK and HOLIDAY_NOTE in the script, and check the article and video",
-  "Run sendTestEmails and check the email",
-  "Run sendMonthlyEmail"
-]];
-
-var SEASON_REMINDER = ["Swap the seasonal article", [
-  "Pick the article for the new season",
-  "Update ARTICLE_TITLE and ARTICLE_LINK in the script",
-  "Publish it: Deploy > Manage deployments > pencil > New version"
-]];
-
-function remindersFor_(date) { // date is "yyyy-mm-dd"
-  var due = [];
-  if (ONCE_REMINDERS[date]) due.push(ONCE_REMINDERS[date]);
-  if (date.slice(8) === "25") due.push(MONTHLY_REMINDER);
-  if (["03-01", "06-01", "09-01", "12-01"].indexOf(date.slice(5)) !== -1) due.push(SEASON_REMINDER);
-  return due;
-}
-
-// Runs by itself every morning. It only sends once per date.
-function sendDueReminders() {
-  var date = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
-  var properties = PropertiesService.getScriptProperties();
-  if (properties.getProperty("LAST_REMINDER_DATE") === date) return;
-  properties.setProperty("LAST_REMINDER_DATE", date);
-  var to = properties.getProperty("REMINDER_EMAIL") || Session.getEffectiveUser().getEmail();
-  remindersFor_(date).forEach(function (reminder) {
-    MailApp.sendEmail({
-      to: to,
-      subject: "Reminder: " + reminder[0],
-      name: FROM_NAME,
-      body: reminder[1].map(function (step) { return "- " + step; }).join("\n")
-    });
-  });
-}
-
-function setupReminders() {
-  assertOwner_();
-  ScriptApp.getProjectTriggers().forEach(function (trigger) {
-    if (trigger.getHandlerFunction() === "sendDueReminders") ScriptApp.deleteTrigger(trigger);
-  });
-  ScriptApp.newTrigger("sendDueReminders").timeBased().everyDays(1).atHour(8).create();
-}
-
-// Sends one sample reminder so you can check it reaches you.
-function sendTestReminder() {
-  assertOwner_();
-  var to = PropertiesService.getScriptProperties().getProperty("REMINDER_EMAIL") || Session.getEffectiveUser().getEmail();
-  MailApp.sendEmail({ to: to, subject: "TEST reminder: " + MONTHLY_REMINDER[0], name: FROM_NAME, body: MONTHLY_REMINDER[1].map(function (step) { return "- " + step; }).join("\n") });
 }
 
 // ---- Sheet columns ---------------------------------------------------------
@@ -168,10 +94,6 @@ function hasPlaceholder_(text) {
 
 function welcomeReady_() {
   return !hasPlaceholder_(WELCOME_SUBJECT + welcomeText_() + BUSINESS_DETAILS);
-}
-
-function monthlyReady_() {
-  return !hasPlaceholder_(MONTHLY_ID + monthlySubject_() + monthlyText_() + BUSINESS_DETAILS);
 }
 
 function isValidEmail_(email) {
@@ -210,6 +132,8 @@ function doPost(e) {
 
   // Bots fill in the hidden "website" field. Pretend it worked and save nothing.
   if (params.website) return respond_({ ok: true });
+
+  if (params.routine) return respond_(routineAction_(params));
 
   if (params.action === "unsubscribe") {
     unsubscribe(String(params.u || ""));
@@ -293,12 +217,11 @@ function unsubscribe(code) {
 
 // ---- Run these yourself from the Apps Script editor ------------------------
 
-// Sends both emails to you only. Their unsubscribe link opens the real page but removes nobody.
+// Sends the welcome email to you only. Its unsubscribe link removes nobody.
 function sendTestEmails() {
   assertOwner_();
   var me = Session.getEffectiveUser().getEmail();
   sendEmail_(me, "TEST: " + WELCOME_SUBJECT, welcomeText_(), "test");
-  sendEmail_(me, "TEST: " + monthlySubject_(), monthlyText_(), "test");
 }
 
 // Sends the welcome email to anyone who signed up while it had placeholders.
@@ -317,19 +240,190 @@ function sendMissingWelcomes() {
   Logger.log("Welcome emails sent: " + sent);
 }
 
-// Sends the monthly email to everyone who hasn't had this MONTHLY_ID yet.
-function sendMonthlyEmail() {
+// Run this once to start the daily check that sends confirmed emails.
+function setupMonthlySend() {
   assertOwner_();
-  if (!monthlyReady_()) throw new Error("The monthly email still has [IZA: placeholders.");
+  ScriptApp.getProjectTriggers().forEach(function (trigger) {
+    if (trigger.getHandlerFunction() === "sendScheduledMonthly") ScriptApp.deleteTrigger(trigger);
+  });
+  ScriptApp.newTrigger("sendScheduledMonthly").timeBased().everyDays(1).atHour(9).inTimezone(TIME_ZONE).create();
+}
+
+// ---- Monthly email ----------------------------------------------------------
+// The "Monthly emails" tab shows every month's draft, its status and what was sent.
+// Each month's email goes out on the 10th of the month before, once confirmed.
+
+var MONTHLY_TAB = "Monthly emails";
+var MONTHLY_HEADERS = ["Month", "Status", "Version", "Subject", "Body", "Month name", "Page link", "Last reply id", "Updated", "Confirmed", "Sent", "Recipients"];
+var M_ID = 0, M_STATUS = 1, M_VERSION = 2, M_SUBJECT = 3, M_BODY = 4, M_NAME = 5, M_PAGE = 6, M_REPLY = 7, M_UPDATED = 8, M_CONFIRMED = 9, M_SENT = 10, M_RECIPIENTS = 11;
+
+function monthlySheet_() {
+  var book = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = book.getSheetByName(MONTHLY_TAB);
+  if (!sheet) {
+    sheet = book.insertSheet(MONTHLY_TAB);
+    sheet.appendRow(MONTHLY_HEADERS);
+  }
+  return sheet;
+}
+
+// Returns the row for a month as { number: sheet row, values: [...] }, or null.
+function findMonth_(sheet, month) {
+  var rows = sheet.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][M_ID]) === month) return { number: i + 1, values: rows[i] };
+  }
+  return null;
+}
+
+// Next month as "yyyy-MM", plus today's day of the month.
+function targetMonth_() {
+  var now = new Date();
+  var year = Number(Utilities.formatDate(now, TIME_ZONE, "yyyy"));
+  var month = Number(Utilities.formatDate(now, TIME_ZONE, "M"));
+  var next = month === 12 ? (year + 1) + "-01" : year + "-" + ("0" + (month + 1)).slice(-2);
+  return { id: next, day: Number(Utilities.formatDate(now, TIME_ZONE, "d")) };
+}
+
+function emailIza_(subject, text) {
+  MailApp.sendEmail({ to: REVIEW_EMAIL || Session.getEffectiveUser().getEmail(), subject: subject, name: FROM_NAME, body: text });
+}
+
+function missingNote_(body) {
+  var missing = [];
+  if (hasPlaceholder_(body)) missing.push("the [IZA: ...] parts in this email");
+  if (hasPlaceholder_(BUSINESS_DETAILS)) missing.push("your business details in the script");
+  return missing.length ? "\n\nStill needed before this can send: " + missing.join(" and ") + "." : "";
+}
+
+function sendReview_(month, version, subject, body, note) {
+  var isTest = month.indexOf("TEST") === 0;
+  emailIza_("Newsletter review " + month + " (version " + version + ")",
+    (isTest ? "This is a TEST and can never reach subscribers.\n\n" : "") +
+    "Reply with what you want changed, or reply with just the word confirmed." +
+    (isTest ? "" : " Once confirmed it goes out on the 10th.") +
+    (note ? "\n\nNote: " + note : "") + missingNote_(body) +
+    "\n\nSubject: " + subject + "\n\n-----\n" + body + "\n-----");
+}
+
+// Called by the Claude routine. Nothing here can send to subscribers directly.
+function routineAction_(params) {
+  if (!ROUTINE_SECRET || params.secret !== ROUTINE_SECRET) return { ok: false, error: "not allowed" };
+  var month = String(params.month || "");
+  if (!/^(TEST-)?\d{4}-\d{2}$/.test(month)) return { ok: false, error: "bad month" };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var sheet = monthlySheet_();
+    var row = findMonth_(sheet, month);
+
+    if (params.routine === "status") {
+      return {
+        ok: true, found: !!row, status: row ? row.values[M_STATUS] : "",
+        version: row ? row.values[M_VERSION] : 0, subject: row ? row.values[M_SUBJECT] : "",
+        body: row ? row.values[M_BODY] : "", lastReplyId: row ? String(row.values[M_REPLY]) : "",
+        etsyLink: ETSY_LINK
+      };
+    }
+    if (row && row.values[M_STATUS] === "sent") return { ok: false, error: "already sent" };
+
+    if (params.routine === "noteReply") {
+      if (!row) return { ok: false, error: "no draft" };
+      sheet.getRange(row.number, M_REPLY + 1).setValue(String(params.replyId || ""));
+      return { ok: true };
+    }
+
+    if (params.routine === "saveDraft") {
+      var subject = String(params.subject || ""), body = String(params.body || "");
+      if (!subject || !body) return { ok: false, error: "missing text" };
+      var version = row ? Number(row.values[M_VERSION]) + 1 : 1;
+      var values = [month, "draft", version, subject, body, String(params.monthName || ""), String(params.pageLink || ""), String(params.replyId || ""), new Date(), "", "", ""];
+      if (row) values.forEach(function (value, column) { sheet.getRange(row.number, column + 1).setValue(value); });
+      else sheet.appendRow(values);
+      if (month.indexOf("TEST") !== 0) {
+        var properties = PropertiesService.getScriptProperties();
+        if (params.videoLink) properties.setProperty("VIDEO_LINK", String(params.videoLink));
+        if (params.articleLink) {
+          properties.setProperty("ARTICLE_LINK", String(params.articleLink));
+          properties.setProperty("ARTICLE_TITLE", String(params.articleTitle || ""));
+        }
+      }
+      sendReview_(month, version, subject, body, String(params.note || ""));
+      return { ok: true, version: version };
+    }
+
+    if (params.routine === "confirm") {
+      if (!row) return { ok: false, error: "no draft" };
+      sheet.getRange(row.number, M_REPLY + 1).setValue(String(params.replyId || ""));
+      if (hasPlaceholder_(row.values[M_SUBJECT] + row.values[M_BODY])) {
+        emailIza_("Newsletter " + month + " not confirmed yet", "This email still has [IZA: ...] parts, so it can't be confirmed. Reply with the missing details and I'll make a new version.");
+        return { ok: false, error: "placeholders" };
+      }
+      sheet.getRange(row.number, M_STATUS + 1).setValue("confirmed");
+      sheet.getRange(row.number, M_CONFIRMED + 1).setValue(new Date());
+      emailIza_("Newsletter " + month + " confirmed",
+        (month.indexOf("TEST") === 0 ? "Test confirmed. Nothing will be sent." : "Locked in. It goes out on the 10th. Reply with a change before then if you want to reopen it.") + missingNote_(row.values[M_BODY]));
+      return { ok: true };
+    }
+    return { ok: false, error: "unknown action" };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function remindOnce_(key, subject, text) {
+  var properties = PropertiesService.getScriptProperties();
+  if (properties.getProperty(key)) return;
+  properties.setProperty(key, "yes");
+  emailIza_(subject, text);
+}
+
+// Runs by itself every morning. Sends a confirmed email from the 10th onwards.
+function sendScheduledMonthly() {
+  var target = targetMonth_();
+  if (target.day < 10) return;
+  var month = target.id;
+  var monthly = monthlySheet_();
+  var row = findMonth_(monthly, month);
+
+  if (!row) {
+    remindOnce_("REMINDED_MISSING_" + month, "Newsletter " + month + " has no draft", "It's the 10th and there's no draft for " + month + ", so nothing went out. The Claude routine may have failed.");
+    return;
+  }
+  var status = row.values[M_STATUS];
+  if (status === "sent") return;
+  if (status !== "confirmed") {
+    remindOnce_("REMINDED_UNCONFIRMED_" + month, "Newsletter " + month + " is waiting for you", "It's the 10th and you haven't confirmed this email, so nothing went out. Reply to the review email with the word confirmed, or tell me what to change.");
+    return;
+  }
+  var subject = row.values[M_SUBJECT], body = row.values[M_BODY];
+  if (hasPlaceholder_(subject + body + BUSINESS_DETAILS)) {
+    remindOnce_("REMINDED_BLOCKED_" + month, "Newsletter " + month + " can't send yet", "It's confirmed but something is still missing, so nothing went out." + missingNote_(body) + " It sends the morning after that's fixed.");
+    return;
+  }
+
   var sheet = sheet_();
   var rows = sheet.getDataRange().getValues();
-  var sent = 0, remaining = 0;
+  var sent = Number(row.values[M_RECIPIENTS]) || 0, remaining = 0;
   for (var i = 1; i < rows.length; i++) {
-    if (rows[i][COL_MONTHLY] === MONTHLY_ID) continue;
-    if (MailApp.getRemainingDailyQuota() < 1) { remaining++; continue; }
-    sendEmail_(rows[i][COL_EMAIL], monthlySubject_(), monthlyText_(), rows[i][COL_CODE]);
-    sheet.getRange(i + 1, COL_MONTHLY + 1).setValue(MONTHLY_ID);
+    if (String(rows[i][COL_MONTHLY]) === month) continue;
+    if (MailApp.getRemainingDailyQuota() < 2) { remaining++; continue; }
+    sendEmail_(rows[i][COL_EMAIL], subject, body, rows[i][COL_CODE]);
+    sheet.getRange(i + 1, COL_MONTHLY + 1).setValue(month);
     sent++;
   }
-  Logger.log("Monthly emails sent: " + sent + ". Still to send: " + remaining + ". If any remain, run this again tomorrow.");
+  monthly.getRange(row.number, M_RECIPIENTS + 1).setValue(sent);
+  if (remaining > 0) {
+    emailIza_("Newsletter " + month + " partly sent", "Sent to " + sent + " so far. Google's daily limit was reached, so the other " + remaining + " go out tomorrow morning.");
+    return;
+  }
+  monthly.getRange(row.number, M_STATUS + 1).setValue("sent");
+  monthly.getRange(row.number, M_SENT + 1).setValue(new Date());
+  var properties = PropertiesService.getScriptProperties();
+  if (row.values[M_NAME] && row.values[M_PAGE]) {
+    properties.setProperty("CURRENT_PAGE_MONTH", String(row.values[M_NAME]));
+    properties.setProperty("CURRENT_PAGE_LINK", String(row.values[M_PAGE]));
+  }
+  emailIza_("Newsletter " + month + " sent", "Sent to " + sent + " subscribers.");
 }
