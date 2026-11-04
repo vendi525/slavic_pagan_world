@@ -10,9 +10,9 @@
 
 var FROM_NAME = "Slavic Pagan World";
 
-// The page in every email's unsubscribe link. This is the web app URL for now.
-// When the new site is live, change it to "https://slavicpaganworld.com/unsubscribe/".
-var UNSUBSCRIBE_PAGE = "https://script.google.com/macros/s/AKfycbxEVLCJFKEjDWVRIVebPwnLEn1mYXCuTCqgkHF6QuWbbL54Tlvnkm8eqZl4d-GOTH88mQ/exec";
+// The page in every email's unsubscribe link. It's on your own site because
+// Google's web app page fails for anyone signed in to several Google accounts.
+var UNSUBSCRIBE_PAGE = "https://slavicpaganworld.com/unsubscribe/";
 
 // Must match the wording on the website form.
 var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscribe anytime using the link in any email.";
@@ -116,8 +116,9 @@ function doPost(e) {
 
 // ---- Unsubscribe -----------------------------------------------------------
 
-// The link opens a page with a button, because email security tools open links
-// automatically and would otherwise unsubscribe people by accident.
+// Only for emails sent before unsubscribing moved to the website. It opens a page
+// with a button, because email security tools open links automatically and would
+// otherwise unsubscribe people by accident. The website page works the same way.
 function doGet(e) {
   var code = String((e && e.parameter && e.parameter.u) || "");
   if (!/^[A-Za-z0-9-]{1,64}$/.test(code)) {
