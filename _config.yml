@@ -6,3 +6,11 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+permalink: /journal/:title/
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      footer_signup: false # articles end with their own signup box

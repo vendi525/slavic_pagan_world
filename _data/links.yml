@@ -7,6 +7,8 @@ social:
   - label: Etsy
     url: "#"
 legal:
+  - label: About
+    url: /about/
   - label: Privacy
     url: /privacy/
   - label: Business info

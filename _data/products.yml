@@ -1,10 +1,12 @@
 # The shop. To add a product, copy one entry and change the details.
-# category is one of: calendars, embroidery, colouring
+# category must match an id in shop_categories.yml.
 - title: Slavic Pagan Calendar 2027
   category: calendars
   image: /assets/images/placeholder/cover.webp
   image_alt: Calendar cover with a leafy wreath and mushrooms (2026 placeholder)
   description: "[IZA: one short line]"
   price: "[IZA: price]"
-  button_label: Buy on Etsy
-  url: "#" # [IZA: Etsy listing link]
+  button_label: View calendar
+  url: /calendar/          # the product's own page
+  etsy_url: "#"            # [IZA: Etsy listing link]
+  site_buy_url: ""         # leave empty until on-site checkout exists; the "Buy here" button then appears

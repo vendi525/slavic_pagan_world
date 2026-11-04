@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<article class="prose article">
+  <p class="article-meta">{{ page.topic }} · {{ page.date | date: "%-d %B %Y" }}</p>
+  <h1>{{ page.title }}</h1>
+  {% if page.cover %}<img class="article-cover" src="{{ page.cover }}" alt="{{ page.cover_alt }}">{% endif %}
+  {% if page.intro %}<p class="article-lead">{{ page.intro }}</p>{% endif %}
+  {{ content }}
+  {% if page.youtube_id %}{% include youtube.html id=page.youtube_id title=page.title %}{% endif %}
+  {% if page.sources %}
+  <section class="sources">
+    <h2>Sources</h2>
+    <ul>
+      {% for source in page.sources %}<li>{{ source }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+<div class="section">{% include newsletter-box.html %}</div>

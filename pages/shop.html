@@ -1,0 +1,16 @@
+---
+layout: default
+title: Shop
+permalink: /shop/
+---
+<h1>Shop</h1>
+{% assign visible = site.data.shop_categories | where: "visible", true %}
+{% for category in visible %}
+<section{% unless forloop.first %} class="section"{% endunless %}>
+  {% if visible.size > 1 %}<h2>{{ category.label }}</h2>{% endif %}
+  <div class="card-grid">
+    {% assign items = site.data.products | where: "category", category.id %}
+    {% for item in items %}{% include product-card.html product=item %}{% endfor %}
+  </div>
+</section>
+{% endfor %}

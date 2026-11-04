@@ -1,0 +1,7 @@
+{% assign product = include.product %}
+<div class="buy-box">
+  <a class="btn btn-primary" href="{{ product.etsy_url }}">Buy on Etsy</a>
+  {% if product.site_buy_url and product.site_buy_url != "" %}
+  <a class="btn btn-secondary" href="{{ product.site_buy_url }}">Buy here</a>
+  {% endif %}
+</div>

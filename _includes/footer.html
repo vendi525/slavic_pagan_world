@@ -1,6 +1,6 @@
 <footer class="site-footer">
   <div class="site-footer-inner">
-    {% include newsletter-box.html compact=true %}
+    {% unless page.footer_signup == false %}{% include newsletter-box.html compact=true %}{% endunless %}
     <ul class="footer-links" aria-label="Find me elsewhere">
       {% for item in site.data.links.social %}
       <li><a href="{{ item.url }}">{{ item.label }}</a></li>
@@ -10,6 +10,7 @@
       {% for item in site.data.links.legal %}
       <li><a href="{{ item.url }}">{{ item.label }}</a></li>
       {% endfor %}
+      <li><button class="link-button" type="button" data-cookie-settings>Cookie settings</button></li>
     </ul>
     <p class="footer-business">[IZA: s.p. name, address, tax number]</p>
   </div>

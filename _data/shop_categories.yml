@@ -1,0 +1,10 @@
+# Set visible to true when a category has products to show.
+- id: calendars
+  label: Calendars
+  visible: true
+- id: embroidery
+  label: Embroidery
+  visible: false
+- id: colouring
+  label: Colouring
+  visible: false

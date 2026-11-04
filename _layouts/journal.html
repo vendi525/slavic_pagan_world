@@ -1,0 +1,23 @@
+---
+layout: default
+---
+<h1>Journal</h1>
+<nav aria-label="Journal topics">
+  <ul class="topic-menu">
+    <li><a href="/journal/"{% if page.url == "/journal/" %} aria-current="page"{% endif %}>All</a></li>
+    {% for topic in site.data.journal_topics %}
+    <li><a href="{{ topic.url }}"{% if page.url == topic.url %} aria-current="page"{% endif %}>{{ topic.label }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+{% if page.topic %}{% assign posts = site.posts | where: "topic", page.topic %}{% else %}{% assign posts = site.posts %}{% endif %}
+{% if posts.size > 0 %}
+<div class="card-grid">
+  {% for post in posts %}
+  {% assign post_date = post.date | date: "%-d %B %Y" %}
+  {% include article-card.html url=post.url image=post.cover image_alt=post.cover_alt category=post.topic date=post_date title=post.title intro=post.intro %}
+  {% endfor %}
+</div>
+{% else %}
+<p>✨ New articles on myths and festivals coming soon. ✨</p>
+{% endif %}

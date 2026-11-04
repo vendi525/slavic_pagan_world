@@ -1,0 +1,51 @@
+---
+layout: default
+footer_signup: false
+title: Calendar 2027
+permalink: /calendar/
+---
+{% assign calendar = site.data.products.first %}
+<section class="hero">
+  <div class="art-card art-card-square">
+    <img src="{{ calendar.image }}" alt="{{ calendar.image_alt }}" fetchpriority="high">
+  </div>
+  <div class="hero-text">
+    <h1>{{ calendar.title }}</h1>
+    <p class="hero-tagline">With myths and stories!</p>
+    <p class="product-price">{{ calendar.price }}</p>
+    {% include buy-box.html product=calendar %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>Inside the calendar</h2>
+  <div class="gallery">
+    {% for month in site.data.calendar_pages %}
+    <a class="art-card art-card-square" href="{{ month.image }}"><img src="{{ month.image }}" alt="{{ month.alt }}" loading="lazy"></a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section details">
+  <div>
+    <h2>What's inside</h2>
+    <ul>
+      <li>Months</li>
+      <li>Holidays</li>
+      <li>Myths and stories</li>
+    </ul>
+    <p>[IZA: more detail]</p>
+  </div>
+  <div>
+    <h2>Format</h2>
+    <p>Digital PDF</p>
+    <p>[IZA: printed version, if it happens]</p>
+  </div>
+</section>
+
+<section class="section buy-again">
+  <h2>{{ calendar.title }}</h2>
+  {% include buy-box.html product=calendar %}
+</section>
+
+<div class="section">{% include newsletter-box.html %}</div>

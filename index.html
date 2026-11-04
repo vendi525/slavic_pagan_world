@@ -1,142 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slavic Pagan Calendar</title>
+---
+layout: default
+---
+{% assign calendar = site.data.products.first %}
+<section class="hero">
+  <a class="art-card art-card-square" href="{{ calendar.url }}">
+    <img src="{{ calendar.image }}" alt="{{ calendar.image_alt }}" fetchpriority="high">
+  </a>
+  <div class="hero-text">
+    <h1>{{ calendar.title }}</h1>
+    <p class="hero-tagline">With myths and stories!</p>
+    <p>🍄 Embrace the mystical pagan traditions of our ancestors and tune your life to the rhythm of nature. 🦉</p>
+    <a class="btn btn-primary" href="{{ calendar.url }}">{{ calendar.button_label }}</a>
+  </div>
+</section>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Metamorphous&display=swap" rel="stylesheet">
+<section class="section">
+  <div class="gallery gallery-four">
+    {% assign previews = "0,3,5,9" | split: "," %}
+    {% for i in previews %}
+    {% assign index = i | plus: 0 %}
+    {% assign month = site.data.calendar_pages[index] %}
+    <a class="art-card art-card-square" href="{{ calendar.url }}"><img src="{{ month.image }}" alt="{{ month.alt }}" loading="lazy"></a>
+    {% endfor %}
+  </div>
+</section>
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="cookie-banner">
-        <p>Are you okay with cookies?</p>
-        <div class="cookie-button">
-            <button id="accept-cookies">It's fine</button>
-            <button id="reject-cookies">Sadly, no</button>
-        </div>
-    </div>
-    <div class="container">
-        <div class="header-banner">
-            <h1>Slavic Pagan Calendar 2026</h1>
-            <h2>With myths and stories!</h2>
-            <h3>🍄 Embrace the mystical pagan traditions of our ancestors and tune your life to the rhythm of nature. 🦉</h3>
-        </div>
+<div class="section">{% include newsletter-box.html %}</div>
 
-        <div class="graphic-area">
-            <picture>
-                 <source
-                  srcset="images/cover-photo-mobile.png"
-                  media="(max-width: 768px)">
+{% if site.posts.size > 0 %}
+<section class="section">
+  <h2>From the journal</h2>
+  <div class="card-grid">
+    {% for post in site.posts limit:3 %}
+    {% assign post_date = post.date | date: "%-d %B %Y" %}
+    {% include article-card.html url=post.url image=post.cover image_alt=post.cover_alt category=post.topic date=post_date title=post.title intro=post.intro %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
-                  <img
-                    src="images/cover-photo-desktop.png"
-                    alt="Cover image">
-
-            </picture>
-
-
-            <div class="action-box">
-                <a
-                    href="images/cover-photo-desktop.png"
-                    target="_blank"
-                    id="preview-desktop"
-                    class="btn btn-preview preview-desktop">
-                    View Preview
-                </a>
-
-                <a
-                    href="images/cover-photo-mobile.png"
-                    target="_blank"
-                    id="preview-mobile"
-                    class="btn btn-preview preview-mobile">
-                    View Preview
-                </a>
-
-                <a
-                    href="files/slavic-calendar-2026.pdf"
-                    download
-                    id="download"
-                    class="btn btn-download">
-                    Download pdf
-                </a>
-            </div>
-        </div>
-
-        <p class="footer-text">✨ New articles on myths and festivals coming soon. ✨</p>
-    </div>
-    
-    <script>
-    
-    function loadGA4() {
-       if (window.GA4Loaded) return;
-       window.GA4Loaded = true;
-        
-       const gaScript = document.createElement('script');
-       gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1KZQ908ZL0";
-       gaScript.async = true;
-       document.head.appendChild(gaScript);
-
-       gaScript.onload = () => {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            gtag('config', 'G-1KZQ908ZL0');
-        }
-    }
-    
-    const cookieBanner = document.getElementById('cookie-banner');    
-    if (localStorage.getItem('cookiesAccepted') === 'yes') {
-        loadGA4();
-        document.getElementById('cookie-banner').style.display = 'none';
-    }
-
-    document.getElementById('accept-cookies').addEventListener('click', function() {
-       localStorage.setItem('cookiesAccepted', 'yes');
-       loadGA4();
-       document.getElementById('cookie-banner').style.display = 'none';
-    });
-
-    document.getElementById('reject-cookies').addEventListener('click', function() {
-       localStorage.setItem('cookiesAccepted', 'no');
-       document.getElementById('cookie-banner').style.display = 'none';
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const downloadBtn = document.getElementById('download');
-        downloadBtn.addEventListener('click', function() {
-            if (!sessionStorage.getItem('downloaded') && window.gtag) {
-                gtag('event', 'file_download', {
-                    file_name: 'files/slavic-calendar-2026.pdf',
-                    file_type: 'pdf'
-                });
-                sessionStorage.setItem('downloaded', 'yes');
-            }
-        });
-    });
-
-    document.getElementById('preview-desktop').addEventListener('click', function() {
-    if (window.gtag) {
-        gtag('event', 'file_preview', {
-            file_name: 'images/cover-photo-desktop.png',
-            file_type: 'png'
-            });
-        }
-    });
-
-    document.getElementById('preview-mobile').addEventListener('click', function() {
-    if (window.gtag) {
-        gtag('event', 'file_preview', {
-            file_name: 'images/cover-photo-mobile.png',
-            file_type: 'png'
-            });
-        }
-    });
-
-    </script>
-</body>
-</html>
+<section class="section about-strip">
+  <h2>About</h2>
+  <p>[IZA: one or two lines about you]</p>
+  <p class="about-links">
+    <a class="btn btn-secondary" href="/about/">Read more</a>
+    <a class="btn btn-secondary" href="{{ site.data.links.social[0].url }}">YouTube</a>
+  </p>
+</section>
