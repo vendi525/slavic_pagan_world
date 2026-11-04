@@ -10,28 +10,34 @@
 
 var FROM_NAME = "Slavic Pagan World";
 
+// Leave empty until the new site is live, then set to
+// "https://slavicpaganworld.com/unsubscribe/" so emails link to your own site.
+var UNSUBSCRIBE_PAGE = "";
+
 // Must match the wording on the website form.
 var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscribe anytime using the link in any email.";
 
 // ---- Edit these ------------------------------------------------------------
 
-var WELCOME_SUBJECT = "[IZA: welcome email subject]";
-var WELCOME_TEXT = "[IZA: welcome email text, with a link to the current calendar page]";
+// {{greeting}} becomes "Hi Ana," or just "Hi," if no name was given.
+var WELCOME_SUBJECT = "Welcome to Slavic Pagan World";
+var WELCOME_TEXT = "{{greeting}}\n\nThank you for signing up. Once a month I'll send you one free page from the Slavic Pagan Calendar, so look out for the next one.\n\nIf this email landed in spam, please mark it as not spam so the calendar pages reach you.\n\nIza\nSlavic Pagan World";
 
 // Change MONTHLY_ID for each new send, for example "2027-01". If a send stops
 // at the daily limit, running it again continues with whoever hasn't had it.
 var MONTHLY_ID = "[IZA: month, for example 2027-01]";
 var MONTHLY_SUBJECT = "[IZA: monthly email subject]";
-var MONTHLY_TEXT = "[IZA: monthly email text, with a link to this month's calendar page]";
+var MONTHLY_TEXT = "{{greeting}}\n\n[IZA: monthly email text, with a link to this month's calendar page]";
 
 // ---- Sheet columns ---------------------------------------------------------
 
-var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent"];
-var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5; // positions in a row, from 0
+var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent", "First name"];
+var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5, COL_NAME = 6; // positions in a row, from 0
 
 function sheet_() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
+  else if (!sheet.getRange(1, COL_NAME + 1).getValue()) sheet.getRange(1, COL_NAME + 1).setValue(HEADERS[COL_NAME]);
   return sheet;
 }
 
@@ -43,16 +49,24 @@ function isValidEmail_(email) {
   return email.length <= 254 && /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email) && /^[A-Za-z0-9]/.test(email);
 }
 
-function unsubscribeLink_(code) {
-  return ScriptApp.getService().getUrl() + "?u=" + encodeURIComponent(code);
+// Names go into emails, so only plain names are kept. This stops anyone using
+// the form to send links or other text through your account.
+function cleanName_(name) {
+  name = String(name || "").trim();
+  return /^\p{L}[\p{L} '’.-]{0,49}$/u.test(name) ? name : "";
 }
 
-function sendEmail_(to, subject, text, code) {
+function unsubscribeLink_(code) {
+  return (UNSUBSCRIBE_PAGE || ScriptApp.getService().getUrl()) + "?u=" + encodeURIComponent(code);
+}
+
+function sendEmail_(to, subject, text, code, name) {
+  var greeting = name ? "Hi " + name + "," : "Hi,";
   MailApp.sendEmail({
     to: to,
     subject: subject,
     name: FROM_NAME,
-    body: text + "\n\n--\nUnsubscribe: " + unsubscribeLink_(code)
+    body: text.replace("{{greeting}}", function () { return greeting; }) + "\n\n--\nUnsubscribe: " + unsubscribeLink_(code)
   });
 }
 
@@ -76,6 +90,11 @@ function doPost(e) {
   // Bots fill in the hidden "website" field. Pretend it worked and save nothing.
   if (params.website) return respond_({ ok: true });
 
+  if (params.action === "unsubscribe") {
+    unsubscribe(String(params.u || ""));
+    return respond_({ ok: true });
+  }
+
   var email = String(params.email || "").trim().toLowerCase();
   if (!isValidEmail_(email) || params.consent !== "yes") return respond_({ ok: false });
 
@@ -87,13 +106,16 @@ function doPost(e) {
     var alreadySignedUp = rows.some(function (row) { return row[COL_EMAIL] === email; });
     if (!alreadySignedUp) {
       var code = Utilities.getUuid();
-      sheet.appendRow([new Date(), email, CONSENT_WORDING, code, "", ""]);
+      var name = cleanName_(params.name);
+      sheet.appendRow([new Date(), email, CONSENT_WORDING, code, "", "", name]);
       if (!hasPlaceholder_(WELCOME_SUBJECT + WELCOME_TEXT)) {
         try {
-          sendEmail_(email, WELCOME_SUBJECT, WELCOME_TEXT, code);
+          sendEmail_(email, WELCOME_SUBJECT, WELCOME_TEXT, code, name);
           sheet.getRange(rows.length + 1, COL_WELCOME + 1).setValue(new Date());
         } catch (error) {
           // The signup is saved. sendMissingWelcomes() can catch up later.
+          // This shows up under Executions in the Apps Script editor.
+          console.error("Welcome email failed: " + error);
         }
       }
     }
@@ -154,8 +176,8 @@ function unsubscribe(code) {
 function sendTestEmails() {
   assertOwner_();
   var me = Session.getEffectiveUser().getEmail();
-  sendEmail_(me, "TEST: " + WELCOME_SUBJECT, WELCOME_TEXT, "test");
-  sendEmail_(me, "TEST: " + MONTHLY_SUBJECT, MONTHLY_TEXT, "test");
+  sendEmail_(me, "TEST: " + WELCOME_SUBJECT, WELCOME_TEXT, "test", "Ana");
+  sendEmail_(me, "TEST: " + MONTHLY_SUBJECT, MONTHLY_TEXT, "test", "Ana");
 }
 
 // Sends the welcome email to anyone who signed up while it had placeholders.
@@ -167,7 +189,7 @@ function sendMissingWelcomes() {
   var sent = 0;
   for (var i = 1; i < rows.length; i++) {
     if (rows[i][COL_WELCOME] || MailApp.getRemainingDailyQuota() < 1) continue;
-    sendEmail_(rows[i][COL_EMAIL], WELCOME_SUBJECT, WELCOME_TEXT, rows[i][COL_CODE]);
+    sendEmail_(rows[i][COL_EMAIL], WELCOME_SUBJECT, WELCOME_TEXT, rows[i][COL_CODE], rows[i][COL_NAME]);
     sheet.getRange(i + 1, COL_WELCOME + 1).setValue(new Date());
     sent++;
   }
@@ -184,7 +206,7 @@ function sendMonthlyEmail() {
   for (var i = 1; i < rows.length; i++) {
     if (rows[i][COL_MONTHLY] === MONTHLY_ID) continue;
     if (MailApp.getRemainingDailyQuota() < 1) { remaining++; continue; }
-    sendEmail_(rows[i][COL_EMAIL], MONTHLY_SUBJECT, MONTHLY_TEXT, rows[i][COL_CODE]);
+    sendEmail_(rows[i][COL_EMAIL], MONTHLY_SUBJECT, MONTHLY_TEXT, rows[i][COL_CODE], rows[i][COL_NAME]);
     sheet.getRange(i + 1, COL_MONTHLY + 1).setValue(MONTHLY_ID);
     sent++;
   }

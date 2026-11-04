@@ -84,7 +84,7 @@
       var endpoint = form.getAttribute("action");
 
       if (form.elements.website.value) {
-        status.textContent = "Thank you, you're signed up.";
+        status.textContent = "Thank you, you're signed up. If you don't see the email, check your spam folder and mark it as not spam.";
         form.reset();
         return;
       }
@@ -99,7 +99,7 @@
         .then(function (response) { return response.json(); })
         .then(function (result) {
           if (!result.ok) throw new Error("rejected");
-          status.textContent = "Thank you, you're signed up.";
+          status.textContent = "Thank you, you're signed up. If you don't see the email, check your spam folder and mark it as not spam.";
           form.reset();
         })
         .catch(function () {
@@ -108,6 +108,34 @@
         .finally(function () { button.disabled = false; });
     });
   });
+
+  var unsubscribe = document.querySelector("[data-unsubscribe]");
+  if (unsubscribe) {
+    var code = new URLSearchParams(location.search).get("u");
+    var unsubscribeButton = unsubscribe.querySelector("button");
+    var unsubscribeStatus = unsubscribe.querySelector("[role=status]");
+    if (!code) {
+      unsubscribeButton.hidden = true;
+      unsubscribeStatus.textContent = "This link isn't valid.";
+    }
+    unsubscribeButton.addEventListener("click", function () {
+      unsubscribeButton.disabled = true;
+      fetch(unsubscribe.dataset.unsubscribe, {
+        method: "POST",
+        body: new URLSearchParams({ action: "unsubscribe", u: code })
+      })
+        .then(function (response) { return response.json(); })
+        .then(function (result) {
+          if (!result.ok) throw new Error("rejected");
+          unsubscribeButton.hidden = true;
+          unsubscribeStatus.textContent = "You are unsubscribed, and your details have been deleted.";
+        })
+        .catch(function () {
+          unsubscribeButton.disabled = false;
+          unsubscribeStatus.textContent = "Something went wrong. Please try again.";
+        });
+    });
+  }
 
   document.querySelectorAll(".video").forEach(function (video) {
     video.querySelector(".video-play").addEventListener("click", function () {
