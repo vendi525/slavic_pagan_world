@@ -20,7 +20,7 @@ var CONSENT_WORDING = "Send me one free calendar page each month. I can unsubscr
 // ---- Edit these ------------------------------------------------------------
 
 var ETSY_LINK = "[IZA: Etsy listing link]";
-var VIDEO_LINK = "https://www.youtube.com/@theslavicfairy"; // or a link to the newest video
+var VIDEO_LINK = "https://www.youtube.com/watch?v=Mqx5K0wY0Gw"; // the newest full video
 var BUSINESS_DETAILS = "[IZA: s.p. name and address]";
 
 // The article for this season, shown in both emails. Leave empty until there is one.
