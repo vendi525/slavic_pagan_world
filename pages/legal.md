@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Business info
+description: "Business details for Slavic Pagan World."
 permalink: /legal/
 ---
 

@@ -1,6 +1,7 @@
 ---
 layout: page
 title: About
+description: "About Iza and Slavic Pagan World."
 permalink: /about/
 ---
 

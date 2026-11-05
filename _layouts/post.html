@@ -4,7 +4,7 @@ layout: default
 <article class="prose article">
   <p class="article-meta">{{ page.topic }} · {{ page.date | date: "%-d %B %Y" }}</p>
   <h1>{{ page.title }}</h1>
-  {% if page.cover %}<img class="article-cover" src="{{ page.cover }}" alt="{{ page.cover_alt }}">{% endif %}
+  {% if page.cover %}<img class="article-cover" src="{{ page.cover }}" alt="{{ page.cover_alt }}"{% if page.pin_image %} data-pin-media="{{ page.pin_image | absolute_url }}" data-pin-description="{{ page.title | escape }}"{% endif %}>{% endif %}
   {% if page.intro %}<p class="article-lead">{{ page.intro }}</p>{% endif %}
   {{ content }}
   {% if page.youtube_id %}{% include youtube.html id=page.youtube_id title=page.title %}{% endif %}
@@ -16,6 +16,9 @@ layout: default
       {% endfor %}
     </ul>
   </section>
+  {% endif %}
+  {% if page.pin_image %}
+  <p><a class="btn btn-secondary" href="https://www.pinterest.com/pin/create/button/?url={{ page.url | absolute_url | url_encode }}&media={{ page.pin_image | absolute_url | url_encode }}&description={{ page.title | url_encode }}" target="_blank" rel="noopener">Save to Pinterest</a></p>
   {% endif %}
 </article>
 {% assign recent = site.posts | where_exp: "post", "post.url != page.url" %}

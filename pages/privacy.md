@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Privacy
+description: "How Slavic Pagan World handles cookies, analytics and newsletter data."
 permalink: /privacy/
 ---
 

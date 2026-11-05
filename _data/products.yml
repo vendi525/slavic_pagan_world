@@ -7,6 +7,8 @@
   gallery: calendar_pages  # example pages shown in the same cell (a file in _data), optional
   description: "[IZA: one short line]"
   price: "[IZA: price]"
+  price_number: ""         # [IZA: the price as a number, like 12.00, for Google results]
+  price_currency: EUR
   button_label: Order now
   url: /calendar/          # the product's own page
   etsy_url: "#"            # [IZA: Etsy listing link]

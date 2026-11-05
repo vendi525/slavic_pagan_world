@@ -1,8 +1,13 @@
 title: Slavic Pagan World
+tagline: Slavic pagan calendar, myths and holidays
+description: "A Slavic pagan calendar with myths and stories, plus a wiki of Slavic holidays, gods and rituals."
 url: https://slavicpaganworld.com
+baseurl: "" # set on purpose, otherwise GitHub Pages tooling can guess a wrong path
 markdown: kramdown
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
 newsletter_endpoint: "https://script.google.com/macros/s/AKfycbxEVLCJFKEjDWVRIVebPwnLEn1mYXCuTCqgkHF6QuWbbL54Tlvnkm8eqZl4d-GOTH88mQ/exec"
 exclude:
   - README.md
@@ -14,7 +19,16 @@ permalink: /wiki/:title/
 defaults:
   - scope:
       path: ""
+    values:
+      image: /assets/images/placeholder/share-cover.jpg # used when shared; [IZA: replace with the 2027 cover]
+  - scope:
+      path: files
+    values:
+      sitemap: false # the old PDF stays reachable but isn't offered to search engines
+  - scope:
+      path: ""
       type: posts
     values:
       layout: post
+      author: Iza
       footer_signup: false # articles end with their own signup box

@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  {% seo %}
   {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
   <link rel="preload" href="/assets/fonts/metamorphous-latin.woff2" as="font" type="font/woff2" crossorigin>
   {% feed_meta %}
+  {% if page.structured_data %}{% include product-schema.html %}{% endif %}
   <link rel="stylesheet" href="/assets/css/main.css">
   <script src="/assets/js/site.js" defer></script>
 </head>

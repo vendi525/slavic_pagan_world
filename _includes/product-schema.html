@@ -1,0 +1,17 @@
+{% assign calendar = site.data.products.first %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ calendar.title | jsonify }},
+  "description": {{ page.description | jsonify }},
+  "image": {{ calendar.image | absolute_url | jsonify }}{% if calendar.price_number != "" and calendar.etsy_url != "#" %},
+  "offers": {
+    "@type": "Offer",
+    "price": {{ calendar.price_number | jsonify }},
+    "priceCurrency": {{ calendar.price_currency | jsonify }},
+    "availability": "https://schema.org/InStock",
+    "url": {{ calendar.etsy_url | jsonify }}
+  }{% endif %}
+}
+</script>
