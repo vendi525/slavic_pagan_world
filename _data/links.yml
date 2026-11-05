@@ -7,9 +7,7 @@ social:
   - label: Etsy
     url: "#"
 legal:
-  - label: About
-    url: /about/
   - label: Privacy
     url: /privacy/
-  - label: Business info
-    url: /legal/
+# The home page plays the newest full video from this list (long videos only, no Shorts), so it updates by itself.
+youtube_videos: UULFFQIPSgAB4ixVkAamAupKyQ

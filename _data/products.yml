@@ -11,5 +11,5 @@
   price_currency: EUR
   button_label: Order now
   url: /calendar/          # the product's own page
-  etsy_url: "#"            # [IZA: Etsy listing link]
-  site_buy_url: ""         # optional: own checkout link later. Empty means "Order now" goes to Etsy
+  etsy_url: "#"            # [IZA: Etsy link for the printed calendar] ("Order now" button)
+  etsy_digital_url: "#"    # [IZA: Etsy link for the digital download] ("Digital download" button)

@@ -391,6 +391,34 @@ a:hover { color: var(--accent-hover); }
 .sources { margin-top: var(--space-4); font-size: 1rem; }
 .sources ul { padding-left: 1.25rem; }
 
+/* Wiki lists */
+.wiki-index section + section { margin-top: var(--space-4); }
+.wiki-index h2 a { color: inherit; text-decoration: none; }
+.wiki-list { margin: 0; padding: 0; list-style: none; max-width: var(--text-width); }
+.wiki-list li { padding: var(--space-2) 0; border-bottom: 1px solid rgba(243, 235, 221, 0.15); }
+.wiki-list a { font-family: var(--font-display); font-size: 1.25rem; }
+.wiki-list p { margin: 0.35rem 0 0; }
+.wiki-when { margin-left: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+
+/* Article details */
+.article-meta a { color: inherit; }
+.infobox { width: 100%; margin: var(--space-3) 0; border-collapse: collapse; background: var(--surface); border-radius: var(--radius); font-size: 1rem; overflow: hidden; }
+.infobox thead { display: none; }
+.infobox td { padding: 0.6rem var(--space-2); vertical-align: top; border-top: 1px solid rgba(243, 235, 221, 0.12); }
+.infobox tr:first-child td { border-top: 0; }
+.infobox td:first-child { width: 38%; color: var(--muted); font-family: var(--font-display); }
+.prose blockquote { margin: var(--space-3) 0; padding: var(--space-2) var(--space-3); background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; font-style: italic; }
+.prose blockquote p:last-child { margin-bottom: 0; }
+.prose blockquote cite { display: block; color: var(--muted); font-style: normal; font-size: 0.95rem; }
+.prose h3 { margin-top: var(--space-3); font-size: 1.15rem; }
+.ref { line-height: 0; font-size: 0.75em; }
+.ref a { text-decoration: none; }
+.sources ol { padding-left: 1.5rem; }
+.sources li:target { color: var(--accent); }
+.calendar-promo { display: grid; gap: var(--space-3); align-items: center; text-align: left; }
+.calendar-promo img { width: 100%; border-radius: 3px; }
+@media (min-width: 40rem) { .calendar-promo { grid-template-columns: 1fr 1fr; } }
+
 /* Video: nothing loads from YouTube until play is pressed */
 .video {
   display: flex;

@@ -1,5 +1,5 @@
-{% comment %} Nothing loads from YouTube until the visitor presses play. {% endcomment %}
-<div class="video" data-youtube-id="{{ include.id }}" data-title="{{ include.title | escape }}">
+{% comment %} Nothing loads from YouTube until the visitor presses play. Pass id= for one video, or playlist= for the newest in a list. {% endcomment %}
+<div class="video"{% if include.playlist %} data-youtube-playlist="{{ include.playlist }}"{% else %} data-youtube-id="{{ include.id }}"{% endif %} data-title="{{ include.title | escape }}">
   <button class="btn btn-secondary video-play" type="button">▶ Play video</button>
   <p class="video-note">Loads from YouTube</p>
 </div>

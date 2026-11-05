@@ -2,5 +2,5 @@
   url: /wiki/holidays/
 - label: Gods
   url: /wiki/gods/
-- label: Rituals
-  url: /wiki/rituals/
+# - label: Rituals   (add back once there are ritual articles)
+#   url: /wiki/rituals/

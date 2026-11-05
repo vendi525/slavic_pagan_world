@@ -1,4 +1,5 @@
 ---
+published: false # hidden for now
 layout: page
 title: Business info
 description: "Business details for Slavic Pagan World."

@@ -1,4 +1,5 @@
 ---
+published: false # hidden for now
 layout: page
 title: About
 description: "About Iza and Slavic Pagan World."

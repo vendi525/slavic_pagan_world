@@ -1,33 +1,60 @@
 ---
 layout: default
 ---
+{% comment %} Turns [1], [2] ... in the text into small links to the numbered sources. {% endcomment %}
+{% assign body = content %}
+{% for i in (1..30) %}
+  {% capture marker %}[{{ i }}]{% endcapture %}
+  {% capture ref %}<sup class="ref"><a href="#source-{{ i }}" aria-label="Source {{ i }}">{{ i }}</a></sup>{% endcapture %}
+  {% assign body = body | replace: marker, ref %}
+{% endfor %}
 <article class="prose article">
-  <p class="article-meta">{{ page.topic }} · {{ page.date | date: "%-d %B %Y" }}</p>
-  <h1>{{ page.title }}</h1>
+  <p class="article-meta"><a href="/wiki/{{ page.topic | downcase }}/">{{ page.topic }}</a> · {{ page.date | date: "%-d %B %Y" }}</p>
+  <h1>{{ page.heading | default: page.title }}</h1>
   {% if page.cover %}<img class="article-cover" src="{{ page.cover }}" alt="{{ page.cover_alt }}"{% if page.pin_image %} data-pin-media="{{ page.pin_image | absolute_url }}" data-pin-description="{{ page.title | escape }}"{% endif %}>{% endif %}
   {% if page.intro %}<p class="article-lead">{{ page.intro }}</p>{% endif %}
-  {{ content }}
+  {{ body }}
   {% if page.youtube_id %}{% include youtube.html id=page.youtube_id title=page.title %}{% endif %}
   {% if page.sources %}
   <section class="sources">
     <h2>Sources</h2>
-    <ul>
-      {% for source in page.sources %}<li>{{ source }}</li>
+    <ol>
+      {% for source in page.sources %}<li id="source-{{ forloop.index }}">{{ source | markdownify | remove: "<p>" | remove: "</p>" | strip }}</li>
       {% endfor %}
-    </ul>
+    </ol>
   </section>
   {% endif %}
   {% if page.pin_image %}
   <p><a class="btn btn-secondary" href="https://www.pinterest.com/pin/create/button/?url={{ page.url | absolute_url | url_encode }}&media={{ page.pin_image | absolute_url | url_encode }}&description={{ page.title | url_encode }}" target="_blank" rel="noopener">Save to Pinterest</a></p>
   {% endif %}
 </article>
-{% assign recent = site.posts | where_exp: "post", "post.url != page.url" %}
-{% if recent.size > 0 %}
+
+{% comment %} Read next: the article's own picks first (only once published), then the newest others, 3 in total. {% endcomment %}
+{% assign picks = "" | split: "" %}
+{% for slug in page.related %}
+  {% assign found = site.posts | where: "slug", slug | first %}
+  {% if found and found.url != page.url %}{% assign picks = picks | push: found %}{% endif %}
+{% endfor %}
+{% for post in site.posts %}
+  {% if picks.size >= 3 %}{% break %}{% endif %}
+  {% unless post.url == page.url or picks contains post %}{% assign picks = picks | push: post %}{% endunless %}
+{% endfor %}
+{% if picks.size > 0 %}
 <section class="section">
-  <h2>Recent entries</h2>
+  <h2>Read next</h2>
   <div class="card-grid">
-    {% for post in recent limit:3 %}{% include post-card.html post=post %}{% endfor %}
+    {% for post in picks limit:3 %}{% include post-card.html post=post %}{% endfor %}
   </div>
 </section>
 {% endif %}
+
+{% assign calendar = site.data.products.first %}
+<section class="section buy-again calendar-promo">
+  <img src="{{ calendar.image }}" alt="{{ calendar.image_alt }}" loading="lazy">
+  <div>
+    <h2>{{ calendar.title }}</h2>
+    <p>Every Slavic holiday of the year, with myths and stories.</p>
+    <a class="btn btn-primary" href="{{ calendar.url }}">See the calendar</a>
+  </div>
+</section>
 <div class="section">{% include newsletter-box.html %}</div>

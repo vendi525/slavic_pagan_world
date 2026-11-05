@@ -1,6 +1,6 @@
 <article class="article-card">
   <a class="article-card-link" href="{{ include.url }}">
-    <img src="{{ include.image }}" alt="{{ include.image_alt }}" loading="lazy">
+    {% if include.image %}<img src="{{ include.image }}" alt="{{ include.image_alt }}" loading="lazy">{% endif %}
     <div class="article-card-text">
       <p class="article-meta">{{ include.category }} · {{ include.date }}</p>
       <h3 class="article-title">{{ include.title }}</h3>

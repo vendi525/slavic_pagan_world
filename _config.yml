@@ -4,6 +4,7 @@ description: "A Slavic pagan calendar with myths and stories, plus a wiki of Sla
 url: https://slavicpaganworld.com
 baseurl: "" # set on purpose, otherwise GitHub Pages tooling can guess a wrong path
 markdown: kramdown
+timezone: Europe/Ljubljana # articles with a future date stay hidden until that day
 plugins:
   - jekyll-feed
   - jekyll-seo-tag

@@ -24,10 +24,7 @@ layout: default
 {% endif %}
 
 <section class="section about-strip">
-  <h2>About</h2>
-  <p>[IZA: one or two lines about you]</p>
-  <p class="about-links">
-    <a class="btn btn-secondary" href="/about/">Read more</a>
-    <a class="btn btn-secondary" href="{{ site.data.links.social[0].url }}">YouTube</a>
-  </p>
+  <h2 class="visually-hidden">Latest video</h2>
+  {% include youtube.html playlist=site.data.links.youtube_videos title="Latest video from my YouTube channel" %}
+  <p><a href="{{ site.data.links.social[0].url }}">Follow my Slavic slow living channel on YouTube</a></p>
 </section>

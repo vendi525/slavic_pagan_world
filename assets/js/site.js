@@ -140,7 +140,9 @@
   document.querySelectorAll(".video").forEach(function (video) {
     video.querySelector(".video-play").addEventListener("click", function () {
       var frame = document.createElement("iframe");
-      frame.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(video.dataset.youtubeId) + "?autoplay=1";
+      frame.src = video.dataset.youtubePlaylist
+        ? "https://www.youtube-nocookie.com/embed/videoseries?list=" + encodeURIComponent(video.dataset.youtubePlaylist) + "&autoplay=1"
+        : "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(video.dataset.youtubeId) + "?autoplay=1";
       frame.title = video.dataset.title;
       frame.allow = "autoplay; encrypted-media; picture-in-picture";
       frame.allowFullscreen = true;

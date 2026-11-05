@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<h1>Slavic Pagan Wiki</h1>
+<h1>{% if page.topic %}Slavic {{ page.topic }}{% else %}Slavic Pagan Wiki{% endif %}</h1>
 <nav aria-label="Wiki topics">
   <ul class="topic-menu">
     <li><a href="/wiki/"{% if page.url == "/wiki/" %} aria-current="page"{% endif %}>All</a></li>
@@ -10,11 +10,15 @@ layout: default
     {% endfor %}
   </ul>
 </nav>
-{% if page.topic %}{% assign posts = site.posts | where: "topic", page.topic %}{% else %}{% assign posts = site.posts %}{% endif %}
-{% if posts.size > 0 %}
-<div class="card-grid">
-  {% for post in posts %}{% include post-card.html post=post %}{% endfor %}
-</div>
+<div class="wiki-index">
+{% if page.topic %}
+  {% include wiki-list.html topic=page.topic %}
 {% else %}
-<p>✨ New articles on myths and festivals coming soon. ✨</p>
+  {% for topic in site.data.wiki_topics %}
+  <section>
+    <h2><a href="{{ topic.url }}">{{ topic.label }}</a></h2>
+    {% include wiki-list.html topic=topic.label %}
+  </section>
+  {% endfor %}
 {% endif %}
+</div>

@@ -1,0 +1,3 @@
+{%- comment -%} Links to another wiki article only once it is published; before that it is plain text. {%- endcomment -%}
+{%- assign target = site.posts | where: "slug", include.slug | first -%}
+{%- if target -%}<a href="{{ target.url }}">{{ include.text }}</a>{%- else -%}{{ include.text }}{%- endif -%}
