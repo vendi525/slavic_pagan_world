@@ -6,10 +6,18 @@
   image_alt: Calendar cover with a leafy wreath and mushrooms (2026 placeholder)
   gallery: calendar_pages  # example pages shown in the same cell (a file in _data), optional
   description: "[IZA: one short line]"
-  price: "[IZA: price]"
-  price_number: ""         # [IZA: the price as a number, like 12.00, for Google results]
-  price_currency: EUR
-  button_label: Order now
+  button_label: See the calendar   # button on the home page and in the shop
   url: /calendar/          # the product's own page
-  etsy_url: "#"            # [IZA: Etsy link for the printed calendar] ("Order now" button)
-  etsy_digital_url: "#"    # [IZA: Etsy link for the digital download] ("Digital download" button)
+  price_currency: EUR
+  # Each format gets its own price and its own Etsy button on the product page.
+  formats:
+    - label: Printed calendar
+      price: "[IZA: price]"
+      price_number: ""     # [IZA: the same price as a number, like 24.00, for Google results]
+      button_label: Buy printed
+      etsy_url: "#"        # [IZA: Etsy link for the printed calendar]
+    - label: Digital PDF
+      price: "[IZA: price]"
+      price_number: ""     # [IZA: the same price as a number, like 12.00]
+      button_label: Buy digital
+      etsy_url: "#"        # [IZA: Etsy link for the digital download]

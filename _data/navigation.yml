@@ -1,4 +1,6 @@
 # The main menu.
+- label: Home
+  url: /
 - label: Calendar
   url: /calendar/
 - label: Shop

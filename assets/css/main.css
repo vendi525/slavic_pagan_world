@@ -372,7 +372,6 @@ a:hover { color: var(--accent-hover); }
 .hero .product-price { margin-bottom: var(--space-2); }
 
 /* Buying */
-.buy-box { display: grid; gap: 0.75rem; }
 .buy-again { padding: var(--space-3) var(--space-2); background: var(--surface); border-radius: var(--radius); text-align: center; }
 
 .details { display: grid; gap: var(--space-3); }
@@ -420,6 +419,26 @@ a:hover { color: var(--accent-hover); }
 .calendar-promo { display: grid; gap: var(--space-3); align-items: center; text-align: left; }
 .calendar-promo img { width: 100%; border-radius: 3px; }
 @media (min-width: 40rem) { .calendar-promo { grid-template-columns: 1fr 1fr; } }
+
+/* Buying: one box per format */
+.buy-options { display: grid; gap: var(--space-2); }
+.buy-option { padding: var(--space-2); border: 1px solid rgba(235, 203, 139, 0.45); border-radius: var(--radius); }
+.buy-option-name { margin-bottom: 0.25rem; font-family: var(--font-display); font-size: 1.15rem; }
+.buy-option .product-price { margin-bottom: 0.75rem; }
+.buy-option .btn { width: 100%; }
+@media (min-width: 30rem) { .buy-options { grid-template-columns: 1fr 1fr; } }
+.product-price-line { margin-bottom: 0.25rem; }
+.product-card .product-price-line:last-of-type { margin-bottom: var(--space-2); }
+
+/* Newsletter page: example email, styled like the real one */
+.email-example { max-width: 32rem; margin: 0 auto; }
+.email-sample { padding: var(--space-3); background: var(--field); color: var(--ink); border-radius: var(--radius); font-family: Georgia, serif; line-height: 1.6; }
+.email-sample p { margin: 0 0 1rem; }
+.email-subject { padding-bottom: 0.75rem; border-bottom: 1px solid #d8c9b4; font-weight: bold; }
+.email-heading { margin: 1.5rem 0 1rem !important; font-size: 2rem; line-height: 1.2; color: var(--bg); }
+.email-holidays { margin: 0 0 1rem; padding: 0; list-style: none; }
+.email-holidays li { margin-bottom: 0.5rem; }
+.email-button { display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent); border-radius: var(--radius); font-weight: bold; }
 
 /* Video: nothing loads from YouTube until play is pressed */
 .video {
@@ -477,6 +496,7 @@ a:hover { color: var(--accent-hover); }
 @media (min-width: 48rem) {
   .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
   .hero .btn { width: auto; }
+  .hero .buy-option .btn { width: 100%; }
   .gallery-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.75rem, 1fr)); overflow: visible; padding: 0; }
   .buy-box { display: flex; flex-wrap: wrap; gap: var(--space-2); }
   .buy-again .buy-box { justify-content: center; }
