@@ -55,14 +55,14 @@ function videoBlock_() {
 
 function welcomeText_() {
   var parts = [
-    "Hi, and welcome.",
+    "Hi lovely soul, and welcome.",
     "I'm Iza. I make slow videos about Slavic folklore, seasonal rituals and small handmade things, and I design the Slavic Pagan Calendar.",
-    "Each month I'll send you the holidays and rituals coming up next month, with a short note on each one and the deities connected to them."
+    "Once a month I'll send you the Slavic pagan holidays coming up, and once a week an ancient anecdote for you to contemplate."
   ];
   parts = parts.concat(articleBlock_("Here's something for this time of year:"));
   parts = parts.concat(videoBlock_());
   parts.push("If you'd like the whole year at once, the full 2027 calendar is on Etsy.\n" + ETSY_LINK);
-  parts.push("Talk soon,\nIza");
+  parts.push("Stay well,\nIza");
   return parts.join("\n\n");
 }
 
@@ -107,16 +107,23 @@ function sendEmail_(to, subject, text, code) {
 }
 
 // Emails are written in a small format:
-//   # Heading        **bold**        [[Button text|https://link]]
+//   # Heading        **bold**        [[Button text|https://link]]        [link text](https://link)
 //   Lines starting with a number are the holiday list.
 function escapeHtml_(text) {
   return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 function inlineHtml_(line) {
-  return escapeHtml_(line)
+  // [text](https://link) becomes a text link; bare links are linked as they are.
+  var links = [];
+  var html = escapeHtml_(line).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function (match, text, url) {
+    links.push('<a href="' + url + '" style="color:#7a3b27">' + text + '</a>');
+    return "\u0000" + (links.length - 1) + "\u0000";
+  });
+  html = html
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#7a3b27">$1</a>');
+    .replace(/(https?:\/\/[^\s<\u0000]+)/g, '<a href="$1" style="color:#7a3b27">$1</a>');
+  return html.replace(/\u0000(\d+)\u0000/g, function (match, i) { return links[Number(i)]; });
 }
 
 function renderLine_(line) {
@@ -141,7 +148,8 @@ function wrapHtml_(inner) {
 }
 
 function plainText_(text) {
-  return String(text).replace(/^# /gm, "").replace(/\*\*/g, "").replace(/\[\[(.+?)\|(.+)\]\]/g, "$1: $2");
+  return String(text).replace(/^# /gm, "").replace(/\*\*/g, "").replace(/\[\[(.+?)\|(.+)\]\]/g, "$1: $2")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, "$1: $2");
 }
 
 // Only you can run the sending functions, not visitors to the unsubscribe page.
