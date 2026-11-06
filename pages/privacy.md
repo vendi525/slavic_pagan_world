@@ -9,7 +9,8 @@ permalink: /privacy/
 
 ## Who runs this site
 
-[IZA: s.p. name and contact details]
+Iza Vene s.p.<br>
+Email: <a href="mailto:slavicfairyofficial@gmail.com">slavicfairyofficial@gmail.com</a>
 
 ## Cookies
 

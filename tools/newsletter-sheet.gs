@@ -23,13 +23,13 @@ var ROUTINE_SECRET = ""; // shared with the Claude routine; empty turns it off
 var UNSUBSCRIBE_PAGE = "https://slavicpaganworld.com/unsubscribe/";
 
 // Must match the wording on the website form.
-var CONSENT_WORDING = "Send me the upcoming Slavic holidays and rituals each month. I can unsubscribe anytime using the link in any email.";
+var CONSENT_WORDING = "Send me the upcoming Slavic holidays once a month and a short old story once a week. I can unsubscribe anytime using the link in any email.";
 
 // ---- Edit these ------------------------------------------------------------
 
 var ETSY_LINK = "[IZA: Etsy listing link]";
 var VIDEO_LINK = "https://www.youtube.com/watch?v=Mqx5K0wY0Gw"; // the newest full video
-var BUSINESS_DETAILS = "[IZA: s.p. name and address]";
+var BUSINESS_DETAILS = "Iza Vene s.p. · slavicfairyofficial@gmail.com";
 
 // The article for this season, shown in both emails. Leave empty until there is one.
 var ARTICLE_TITLE = "";
