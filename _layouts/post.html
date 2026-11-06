@@ -11,7 +11,13 @@ layout: default
 <article class="prose article">
   <p class="article-meta"><a href="/wiki/{{ page.topic | downcase }}/">{{ page.topic }}</a> · {{ page.date | date: "%-d %B %Y" }}</p>
   <h1>{{ page.heading | default: page.title }}</h1>
-  {% if page.cover %}<img class="article-cover" src="{{ page.cover }}" alt="{{ page.cover_alt }}"{% if page.pin_image %} data-pin-media="{{ page.pin_image | absolute_url }}" data-pin-description="{{ page.title | escape }}"{% endif %}>{% endif %}
+  {% if page.image %}{% assign header_webp = page.image | replace: ".jpg", ".webp" %}
+  <picture class="article-cover">
+    {% if page.image_mobile %}<source media="(max-width: 639px)" srcset="{{ page.image_mobile }}" type="image/webp" width="1000" height="1500">{% endif %}
+    <source srcset="{{ header_webp }}" type="image/webp" width="1200" height="800">
+    <img src="{{ page.image }}" alt="{{ page.image_alt }}" width="1200" height="800" loading="eager" fetchpriority="high"{% if page.pin_image %} data-pin-media="{{ page.pin_image | absolute_url }}" data-pin-description="{{ page.title | escape }}"{% endif %}>
+  </picture>
+  {% endif %}
   {% if page.intro %}<p class="article-lead">{{ page.intro }}</p>{% endif %}
   {{ body }}
   {% if page.youtube_id %}{% include youtube.html id=page.youtube_id title=page.title %}{% endif %}

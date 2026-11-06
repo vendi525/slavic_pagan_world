@@ -387,7 +387,9 @@ a:hover { color: var(--accent-hover); }
 .topic-menu a:hover, .topic-menu a[aria-current="page"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.35em; }
 
 /* Article */
-.article-cover { width: 100%; margin-bottom: var(--space-3); border-radius: var(--radius); }
+.article-cover { display: block; margin-bottom: var(--space-3); }
+.article-cover img, .article-photo img { width: 100%; height: auto; border-radius: var(--radius); }
+.article-photo { display: block; margin: var(--space-3) 0; }
 .article-lead { font-size: 1.25rem; line-height: 1.6; }
 .sources { margin-top: var(--space-4); font-size: 1rem; }
 .sources ul { padding-left: 1.25rem; }

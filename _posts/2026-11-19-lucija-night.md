@@ -13,6 +13,9 @@ sources:
   - "Kropej, *Supernatural Beings*, p. 51."
   - "Kropej, *Supernatural Beings*, p. 50."
   - "Kropej, *Supernatural Beings*, p. 214."
+image: /assets/images/articles/lucija-night/lucija-night-header-desktop.jpg
+image_mobile: /assets/images/articles/lucija-night/lucija-night-header-mobile.webp
+image_alt: "Engraving of a candle under a pine branch beside a golden crescent moon"
 ---
 
 Behind the Christian saint hides a much older figure: the white woman of midwinter, who walks through the longest nights carrying the first promise of the sun.
@@ -41,6 +44,8 @@ Long before there was a Saint Lucy, the Slavs and their neighbors knew a mighty 
 The saint took her name, but the old woman kept walking. On her night, the Lucias went from house to house. They would "threaten children to put out their eyes but occasionally they also bring them gifts." And "like Pehtra Baba, Lucia brings light, helping the sun to shine more brightly during the dark and cold winter months" (Kropej).[1]
 
 Light and fear in the same hand. Lucija is not a gentle candle saint. She is winter itself at the door: beautiful, strict, and impossible to ignore.
+
+{% include article-photo.html desktop="/assets/images/articles/lucija-night/lucija-night-photo-desktop.webp" mobile="/assets/images/articles/lucija-night/lucija-night-photo-mobile.webp" alt="A single candle glowing behind a frosted window at night" %}
 
 ## The forbidden work
 

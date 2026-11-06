@@ -1,2 +1,3 @@
+{% if include.post.image %}{% assign card_image = include.post.image | replace: ".jpg", ".webp" %}{% else %}{% assign card_image = nil %}{% endif %}
 {% assign post_date = include.post.date | date: "%-d %B %Y" %}
-{% include article-card.html url=include.post.url image=include.post.cover image_alt=include.post.cover_alt category=include.post.topic date=post_date title=include.post.heading intro=include.post.description %}
+{% include article-card.html url=include.post.url image=card_image image_alt=include.post.image_alt category=include.post.topic date=post_date title=include.post.heading intro=include.post.description %}

@@ -1,0 +1,6 @@
+{% comment %} In-article photo: square version on phones, 16:9 above 640px. Use: {% include article-photo.html desktop="..." mobile="..." alt="..." %} {% endcomment %}
+<picture class="article-photo">
+  <source media="(max-width: 639px)" srcset="{{ include.mobile }}" type="image/webp" width="1080" height="1080">
+  <source srcset="{{ include.desktop }}" type="image/webp" width="1080" height="608">
+  <img src="{{ include.desktop }}" alt="{{ include.alt }}" width="1080" height="608" loading="lazy" decoding="async">
+</picture>
