@@ -5,17 +5,19 @@ Optional: picks=",0,3,5," shows only those pages. link="/calendar/" links the la
 {% endcomment %}
 {% assign product = include.product %}
 {% assign pages = site.data[product.gallery] %}
+{% assign main_src = product.image %}{% assign main_alt = product.image_alt %}
+{% if pages and product.start_page != nil %}{% assign start = pages[product.start_page] %}{% assign main_src = start.image %}{% assign main_alt = start.alt %}{% endif %}
 <div class="art-card product-gallery">
   {% if product.tag %}<span class="tag">{{ product.tag }}</span>{% endif %}
-  {% if include.link %}<a href="{{ include.link }}">{% endif %}<img class="gallery-main" src="{{ product.image }}" alt="{{ product.image_alt }}"{% if include.eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>{% if include.link %}</a>{% endif %}
+  {% if include.link %}<a href="{{ include.link }}">{% endif %}<img class="gallery-main" src="{{ main_src }}" alt="{{ main_alt }}"{% if include.eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>{% if include.link %}</a>{% endif %}
   {% if pages %}
   <ul class="gallery-thumbs">
-    <li><a href="{{ product.image }}" aria-current="true"><img src="{{ product.image | replace: '.webp', '-thumb.webp' }}" alt="{{ product.image_alt }}" loading="lazy"></a></li>
+    <li><a href="{{ product.image }}"{% if main_src == product.image %} aria-current="true"{% endif %}><img src="{{ product.image | replace: '.webp', '-thumb.webp' }}" alt="{{ product.image_alt }}" loading="lazy"></a></li>
     {% for month in pages %}
     {% assign index = forloop.index0 %}
     {% capture marker %},{{ index }},{% endcapture %}
     {% if include.picks == nil or include.picks contains marker %}
-    <li><a href="{{ month.image }}"><img src="{{ month.image | replace: '.webp', '-thumb.webp' }}" alt="{{ month.alt }}" loading="lazy"></a></li>
+    <li><a href="{{ month.image }}"{% if main_src == month.image %} aria-current="true"{% endif %}><img src="{{ month.image | replace: '.webp', '-thumb.webp' }}" alt="{{ month.alt }}" loading="lazy"></a></li>
     {% endif %}
     {% endfor %}
   </ul>
