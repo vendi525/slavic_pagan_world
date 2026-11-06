@@ -2,8 +2,8 @@
 # category must match an id in shop_categories.yml.
 - title: Slavic Pagan Calendar 2027
   category: calendars
-  image: /assets/images/placeholder/cover.webp
-  image_alt: Calendar cover with a leafy wreath and mushrooms (2026 placeholder)
+  image: /assets/images/calendar-2027/cover.webp
+  image_alt: Kolo Svaroga 2027 calendar cover with a leafy wreath and mushrooms
   gallery: calendar_pages  # example pages shown in the same cell (a file in _data), optional
   description: "[IZA: one short line]"
   button_label: See the calendar   # button on the home page and in the shop

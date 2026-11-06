@@ -21,7 +21,7 @@ defaults:
   - scope:
       path: ""
     values:
-      image: /assets/images/placeholder/share-cover.jpg # used when shared; [IZA: replace with the 2027 cover]
+      image: /assets/images/calendar-2027/share-cover.jpg # used when shared
   - scope:
       path: files
     values:

@@ -1,25 +1,25 @@
-# Gallery on the calendar page. 2026 art as placeholder: [IZA: swap for 2027 pages]
-- image: /assets/images/placeholder/january.webp
-  alt: January page with a bear, pine trees and a crescent moon
-- image: /assets/images/placeholder/february.webp
-  alt: February page with a fox in a snowy landscape
-- image: /assets/images/placeholder/march.webp
-  alt: March page with birch trees and a small red bird
-- image: /assets/images/placeholder/april.webp
-  alt: April page with a swallow and willow branches
-- image: /assets/images/placeholder/may.webp
+# Gallery on the calendar page: the 12 months of the 2027 calendar.
+- image: /assets/images/calendar-2027/january.webp
+  alt: January page with a bear, pine trees, a crescent moon and a star
+- image: /assets/images/calendar-2027/february.webp
+  alt: February page with a fox in snowy mountains under a pale sun
+- image: /assets/images/calendar-2027/march.webp
+  alt: March page with birch trees and small red birds
+- image: /assets/images/calendar-2027/april.webp
+  alt: April page with swallows and a large bird over a green meadow
+- image: /assets/images/calendar-2027/may.webp
   alt: May page with wildflowers and falling petals
-- image: /assets/images/placeholder/june.webp
+- image: /assets/images/calendar-2027/june.webp
   alt: June page with a bonfire
-- image: /assets/images/placeholder/july.webp
-  alt: July page with a bird, wheat and red poppies
-- image: /assets/images/placeholder/august.webp
-  alt: August page with deer and a large apple
-- image: /assets/images/placeholder/september.webp
-  alt: September page with a snail and mushrooms
-- image: /assets/images/placeholder/october.webp
+- image: /assets/images/calendar-2027/july.webp
+  alt: July page with a sparrow, lightning, wheat and red poppies
+- image: /assets/images/calendar-2027/august.webp
+  alt: August page with deer and a red apple on a branch
+- image: /assets/images/calendar-2027/september.webp
+  alt: September page with a snail on mushrooms and a flock of birds
+- image: /assets/images/calendar-2027/october.webp
   alt: October page with an owl and autumn leaves
-- image: /assets/images/placeholder/november.webp
-  alt: November page with a howling wolf, a bare tree and a full moon
-- image: /assets/images/placeholder/december.webp
+- image: /assets/images/calendar-2027/november.webp
+  alt: November page with a wolf howling at the full moon under a bare tree
+- image: /assets/images/calendar-2027/december.webp
   alt: December page with a tree stump under a starry sky
