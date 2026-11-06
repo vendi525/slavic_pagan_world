@@ -264,8 +264,8 @@ a:hover { color: var(--accent-hover); }
   border-radius: var(--radius);
   text-align: center;
 }
-.newsletter-title { font-size: clamp(1.3rem, 4.5vw, 1.6rem); }
-.newsletter-perks { margin: 0 0 var(--space-2); padding-left: 1.25rem; }
+.newsletter-title { font-size: clamp(1.3rem, 4.5vw, 1.6rem); text-align: left; }
+.newsletter-perks { margin: 0 0 var(--space-2); padding-left: 1.25rem; text-align: left; }
 .newsletter-perks li + li { margin-top: 0.25rem; }
 .newsletter-form {
   display: grid;
