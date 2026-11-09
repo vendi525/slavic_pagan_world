@@ -5,7 +5,6 @@
   image: /assets/images/calendar-2027/cover.webp
   image_alt: Kolo Svaroga 2027 calendar cover with a leafy wreath and mushrooms
   gallery: calendar_pages  # example pages shown in the same cell (a file in _data), optional
-  start_page: 0            # page shown large at first (0 = January); remove to show the cover
   description: "[IZA: one short line]"
   button_label: See the calendar   # button on the home page and in the shop
   url: /calendar/          # the product's own page
