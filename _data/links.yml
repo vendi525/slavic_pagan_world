@@ -1,11 +1,10 @@
-# [IZA: replace each "#" with the real link]
 social:
   - label: YouTube
     url: https://www.youtube.com/@theslavicfairy
   - label: Pinterest
-    url: "#"
+    url: https://www.pinterest.com/IZA_VENE/
   - label: Etsy
-    url: "#"
+    url: https://izaofficial.etsy.com
 legal:
   - label: Privacy
     url: /privacy/

@@ -5,19 +5,24 @@
   image: /assets/images/calendar-2027/cover.webp
   image_alt: Kolo Svaroga 2027 calendar cover with a leafy wreath and mushrooms
   gallery: calendar_pages  # example pages shown in the same cell (a file in _data), optional
-  description: "[IZA: one short line]"
+  description: "The old Slavic year: 12 months of holidays, myths and stories."
   button_label: See the calendar   # button on the home page and in the shop
   url: /calendar/          # the product's own page
   price_currency: EUR
   # Each format gets its own price and its own Etsy button on the product page.
   formats:
     - label: Printed calendar
-      price: "[IZA: price]"
-      price_number: ""     # [IZA: the same price as a number, like 24.00, for Google results]
+      price: ""           # optional, like "€24". Leave empty to show no price
+      price_number: ""     # optional, the same price as a number, like 24.00, for Google results
       button_label: Buy printed
-      etsy_url: "#"        # [IZA: Etsy link for the printed calendar]
+      etsy_url: "https://izaofficial.etsy.com/listing/4611307029/slavic-pagan-calendar-2027-slavic-pagan"
     - label: Digital PDF
-      price: "[IZA: price]"
-      price_number: ""     # [IZA: the same price as a number, like 12.00]
+      price: ""           # optional, like "€24". Leave empty to show no price
+      price_number: ""
       button_label: Buy digital
-      etsy_url: "#"        # [IZA: Etsy link for the digital download]
+      etsy_url: "https://izaofficial.etsy.com/listing/4614133981/slavic-pagan-calendar-2027-printable-us"
+    - label: Poster PDF
+      price: ""
+      price_number: ""
+      button_label: Buy poster
+      etsy_url: "https://izaofficial.etsy.com/listing/4614128905/slavic-pagan-calendar-2027-kolo-svaroga"

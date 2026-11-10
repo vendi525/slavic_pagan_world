@@ -1,10 +1,10 @@
 {% assign product = include.product %}
-{% comment %} One box per format (printed, digital), each with its price and its own Etsy button. {% endcomment %}
+{% comment %} One box per format (printed, digital, poster), each with its price and its own Etsy button. {% endcomment %}
 <div class="buy-options">
   {% for format in product.formats %}
   <div class="buy-option">
     <p class="buy-option-name">{{ format.label }}</p>
-    <p class="product-price">{{ format.price }}</p>
+    {% if format.price != "" %}<p class="product-price">{{ format.price }}</p>{% endif %}
     <a class="btn {% if forloop.first %}btn-primary{% else %}btn-secondary{% endif %}" href="{{ format.etsy_url }}">{{ format.button_label }}</a>
   </div>
   {% endfor %}

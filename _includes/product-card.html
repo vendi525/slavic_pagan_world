@@ -3,6 +3,6 @@
   {% include product-gallery.html product=product picks=",0,3,5,9," %}
   <h3 class="product-title">{{ product.title }}</h3>
   <p class="product-line">{{ product.description }}</p>
-  {% for format in product.formats %}<p class="product-price product-price-line">{{ format.label }}: {{ format.price }}</p>
+  {% for format in product.formats %}{% if format.price != "" %}<p class="product-price product-price-line">{{ format.label }}: {{ format.price }}</p>{% endif %}
   {% endfor %}  <a class="btn btn-primary" href="{{ product.url }}">{{ product.button_label }}</a>
 </article>
