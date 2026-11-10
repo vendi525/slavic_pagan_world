@@ -134,8 +134,8 @@ function welcomeText_() {
 
 // ---- Sheet columns ---------------------------------------------------------
 
-var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent"];
-var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5; // positions in a row, from 0
+var HEADERS = ["Signed up", "Email", "Agreed to", "Unsubscribe code", "Welcome sent", "Last monthly sent", "Last story sent"];
+var COL_EMAIL = 1, COL_CODE = 3, COL_WELCOME = 4, COL_MONTHLY = 5, COL_STORY = 6; // positions in a row, from 0
 
 function sheet_() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
@@ -410,7 +410,11 @@ function missingNote_(body) {
 }
 
 function sendReview_(month, version, subject, body, note) {
-  body = withLatest_(body);
+  var story = storyForWeek_(sendDayFor_(month));
+  note = (note ? note + " " : "") + (story
+    ? "This week's story, from the Stories tab: " + story.values[S_TITLE] + "."
+    : "No story is marked ready for the week of the " + SEND_DAY + "th, so this one goes without a story.");
+  body = withLatest_(monthlyText_(month, body, story));
   var isTest = month.indexOf("TEST") === 0;
   var intro = (isTest ? "This is a TEST and can never reach subscribers.\n\n" : "") +
     "Reply with what you want changed, or reply with just the word confirmed." +
@@ -487,8 +491,15 @@ function remindOnce_(key, subject, text) {
   emailIza_(subject, text);
 }
 
-// Runs by itself every morning. Sends a confirmed email from SEND_DAY onwards.
+// Runs by itself every morning at about 9:00 (the trigger keeps this old name).
+// Sends the monthly email from SEND_DAY onwards, then the weekly story, then story previews.
 function sendScheduledMonthly() {
+  [sendMonthly_, sendScheduledStory_, previewUpcomingStories_].forEach(function (step) {
+    try { step(); } catch (error) { emailIza_("Newsletter problem", "Something went wrong this morning in " + step.name + ": " + error); }
+  });
+}
+
+function sendMonthly_() {
   var target = targetMonth_();
   if (target.day < SEND_DAY) return;
   var month = target.id;
@@ -511,7 +522,9 @@ function sendScheduledMonthly() {
     return;
   }
 
-  body = withLatest_(body);
+  var story = storyForWeek_(dayString_(new Date()), true);
+  if (story) storiesSheet_().getRange(story.number, S_STATUS + 1).setValue(WITH_MONTHLY);
+  body = withLatest_(monthlyText_(month, body, story));
   var sheet = sheet_();
   var rows = sheet.getDataRange().getValues();
   var sent = Number(row.values[M_RECIPIENTS]) || 0, remaining = 0;
@@ -529,5 +542,233 @@ function sendScheduledMonthly() {
   }
   monthly.getRange(row.number, M_STATUS + 1).setValue("sent");
   monthly.getRange(row.number, M_SENT + 1).setValue(new Date());
+  if (story) {
+    var stories = storiesSheet_();
+    stories.getRange(story.number, S_STATUS + 1).setValue("sent");
+    stories.getRange(story.number, S_SENT + 1).setValue(new Date());
+    stories.getRange(story.number, S_RECIPIENTS + 1).setValue(sent + " (with the monthly email)");
+  }
   emailIza_("Newsletter " + month + " sent", "Sent to " + sent + " subscribers.");
+}
+
+
+// ---- Weekly stories ---------------------------------------------------------
+// The "Stories" tab is the story library, one row per story. A story goes out on
+// its "Send on" day at about 9:00, only if its Status is "ready". Anything else,
+// like "draft", waits. Two days before, you get a preview by email.
+// The story planned for the week (Monday to Sunday) of the monthly email goes
+// inside the monthly email instead of on its own.
+// The Newsletter menu in the sheet shows the library and previews a story.
+
+var STORIES_TAB = "Stories";
+var STORY_HEADERS = ["Send on", "Status", "Title", "Theme", "Story", "Credit", "Question", "Sent", "Recipients"];
+var S_DATE = 0, S_STATUS = 1, S_TITLE = 2, S_THEME = 3, S_STORY = 4, S_CREDIT = 5, S_QUESTION = 6, S_SENT = 7, S_RECIPIENTS = 8;
+var STORY_SUBJECT = "A story to sit with: ";
+var WITH_MONTHLY = "with monthly"; // status while it rides along with the monthly email
+var PREVIEW_DAYS_AHEAD = 2;
+var MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function storiesSheet_() {
+  var book = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = book.getSheetByName(STORIES_TAB);
+  if (!sheet) {
+    sheet = book.insertSheet(STORIES_TAB);
+    sheet.appendRow(STORY_HEADERS);
+    sheet.setFrozenRows(1);
+    sheet.getRange("A:A").setNumberFormat("yyyy-mm-dd");
+    sheet.getRange("E:E").setWrap(true);
+    sheet.setColumnWidth(5, 420);
+  }
+  return sheet;
+}
+
+function dayString_(date) {
+  return Utilities.formatDate(date, TIME_ZONE, "yyyy-MM-dd");
+}
+
+function addDays_(day, days) {
+  var date = new Date(day + "T12:00:00Z");
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+// Monday of that day's week, as "yyyy-MM-dd".
+function weekStart_(day) {
+  var weekday = (new Date(day + "T12:00:00Z").getUTCDay() + 6) % 7;
+  return addDays_(day, -weekday);
+}
+
+// The day a month's email is due: SEND_DAY of the month before.
+function sendDayFor_(month) {
+  var parts = month.replace("TEST-", "").split("-"), year = Number(parts[0]), number = Number(parts[1]) - 1;
+  if (number === 0) { number = 12; year--; }
+  return year + "-" + ("0" + number).slice(-2) + "-" + ("0" + SEND_DAY).slice(-2);
+}
+
+// Every story as { number: sheet row, values, day, status }.
+function stories_() {
+  var rows = storiesSheet_().getDataRange().getValues(), list = [];
+  for (var i = 1; i < rows.length; i++) {
+    var date = rows[i][S_DATE];
+    if (!rows[i][S_TITLE] && !rows[i][S_STORY]) continue;
+    list.push({
+      number: i + 1, values: rows[i],
+      day: date instanceof Date ? dayString_(date) : String(date || ""),
+      status: String(rows[i][S_STATUS] || "").trim().toLowerCase()
+    });
+  }
+  return list.sort(function (a, b) { return a.day < b.day ? -1 : a.day > b.day ? 1 : 0; });
+}
+
+// The ready story planned for that day's week, if any.
+function storyForWeek_(day, includeClaimed) {
+  var week = weekStart_(day);
+  return stories_().filter(function (story) {
+    return story.day && weekStart_(story.day) === week &&
+      (story.status === "ready" || (includeClaimed && story.status === WITH_MONTHLY));
+  })[0] || null;
+}
+
+function storyIntro_(values) {
+  return "Here is an ancient anecdote for you to contemplate. This one is about " +
+    String(values[S_THEME] || "[IZA: what the story is about]").trim().replace(/[.\s]+$/, "") + ".";
+}
+
+function storyBlock_(values) {
+  var parts = ["# " + String(values[S_TITLE]).trim(), String(values[S_STORY]).trim()];
+  if (String(values[S_CREDIT]).trim()) parts.push(String(values[S_CREDIT]).trim());
+  if (String(values[S_QUESTION]).trim()) parts.push("**" + String(values[S_QUESTION]).trim().replace(/^\*+|\*+$/g, "") + "**");
+  return parts.join("\n\n");
+}
+
+function storyEmail_(values) {
+  return "Hi lovely soul,\n\n" + storyIntro_(values) + "\n\n" + storyBlock_(values) + "\n\nStay well,\nIza";
+}
+
+function storySubject_(values) {
+  return STORY_SUBJECT + String(values[S_TITLE]).trim();
+}
+
+// The monthly email: the routine writes only the holiday part (# Month, list,
+// deities). This adds the greeting, the week's story, the lines and the sign-off.
+function monthlyText_(month, holidays, story) {
+  holidays = String(holidays).trim();
+  if (/^Hi\b/.test(holidays)) return holidays; // an old draft that is already complete
+  var name = MONTH_NAMES[Number(month.slice(-2)) - 1];
+  if (!story) return "Hi lovely soul,\n\nHere are the Slavic pagan holidays for " + name + ".\n\n" + holidays + "\n\nStay well,\nIza";
+  return "Hi lovely soul,\n\n" + storyIntro_(story.values) + " Below it is a list of Slavic pagan holidays for " + name + ".\n\n" +
+    storyBlock_(story.values) + "\n\n---\n\n" + holidays + "\n\nStay well,\nIza";
+}
+
+function sendScheduledStory_() {
+  var today = dayString_(new Date());
+  var story = stories_().filter(function (s) {
+    return s.status === "sending" || (s.status === "ready" && s.day === today);
+  })[0];
+  if (!story) return;
+  var subject = storySubject_(story.values), body = storyEmail_(story.values);
+  if (hasPlaceholder_(subject + body)) {
+    remindOnce_("REMINDED_STORY_" + story.day, "Story for " + story.day + " can't send", "It still has [IZA: ...] parts, so nothing went out. Fix it in the Stories tab and set Status to ready with a new date.");
+    return;
+  }
+  var stories = storiesSheet_(), id = "story " + story.day;
+  stories.getRange(story.number, S_STATUS + 1).setValue("sending");
+  body = withLatest_(body);
+
+  var sheet = sheet_();
+  if (!sheet.getRange(1, COL_STORY + 1).getValue()) sheet.getRange(1, COL_STORY + 1).setValue(HEADERS[COL_STORY]);
+  var rows = sheet.getDataRange().getValues();
+  var sent = Number(story.values[S_RECIPIENTS]) || 0, remaining = 0;
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][COL_STORY]) === id) continue;
+    if (MailApp.getRemainingDailyQuota() < 2) { remaining++; continue; }
+    sendEmail_(rows[i][COL_EMAIL], subject, body, rows[i][COL_CODE]);
+    sheet.getRange(i + 1, COL_STORY + 1).setValue(id);
+    sent++;
+  }
+  stories.getRange(story.number, S_RECIPIENTS + 1).setValue(sent);
+  if (remaining > 0) {
+    emailIza_("Story partly sent", "Sent to " + sent + " so far. Google's daily limit was reached, so the other " + remaining + " go out tomorrow morning.");
+    return;
+  }
+  stories.getRange(story.number, S_STATUS + 1).setValue("sent");
+  stories.getRange(story.number, S_SENT + 1).setValue(new Date());
+}
+
+// Two days ahead, emails you the story as subscribers will see it.
+function previewUpcomingStories_() {
+  var day = addDays_(dayString_(new Date()), PREVIEW_DAYS_AHEAD);
+  stories_().forEach(function (story) {
+    if (story.day !== day || story.status === "sent") return;
+    var key = "PREVIEWED_STORY_" + story.day + "_" + story.number;
+    var properties = PropertiesService.getScriptProperties();
+    if (properties.getProperty(key)) return;
+    properties.setProperty(key, "yes");
+    var ready = story.status === "ready";
+    var intro = (ready
+      ? "This story goes out on " + story.day + " at about 9:00. To change it, edit its row in the Stories tab before then."
+      : "This story is planned for " + story.day + " but its Status is \"" + story.status + "\", so it will NOT go out. Set Status to ready in the Stories tab if you want it sent.") +
+      " If that day is in the week of the monthly email, it goes inside that email instead.";
+    var body = withLatest_(storyEmail_(story.values));
+    emailIza_("Story preview for " + story.day + ": " + story.values[S_TITLE],
+      intro + "\n\nSubject: " + storySubject_(story.values) + "\n\n-----\n" + plainText_(body) + "\n-----",
+      previewHtml_(intro, storySubject_(story.values), body));
+  });
+}
+
+function previewHtml_(intro, subject, body) {
+  return wrapHtml_('<div style="padding:16px;background:#f3ebdd;border-radius:8px;font-size:14px">' +
+    (intro ? '<p style="margin:0 0 8px">' + escapeHtml_(intro) + '</p>' : '') +
+    '<p style="margin:0"><strong>Subject:</strong> ' + escapeHtml_(subject) + '</p></div>' + renderHtml_(body));
+}
+
+// ---- The Newsletter menu in the sheet ---------------------------------------
+
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu("Newsletter")
+    .addItem("Show the story library", "showStoryLibrary")
+    .addItem("Preview the selected story", "previewSelectedStory")
+    .addItem("Email me the selected story", "emailSelectedStory")
+    .addToUi();
+}
+
+function selectedStory_() {
+  var sheet = SpreadsheetApp.getActiveSheet(), row = sheet.getActiveRange().getRow();
+  if (sheet.getName() !== STORIES_TAB || row < 2) {
+    SpreadsheetApp.getUi().alert("Open the Stories tab and click any cell in a story's row first.");
+    return null;
+  }
+  return sheet.getRange(row, 1, 1, STORY_HEADERS.length).getValues()[0];
+}
+
+function previewSelectedStory() {
+  var values = selectedStory_();
+  if (!values) return;
+  var html = previewHtml_("", storySubject_(values), withLatest_(storyEmail_(values)));
+  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutput(html).setWidth(640).setHeight(720), "Story preview");
+}
+
+function emailSelectedStory() {
+  var values = selectedStory_();
+  if (!values) return;
+  var body = withLatest_(storyEmail_(values));
+  emailIza_("TEST: " + storySubject_(values), plainText_(body), wrapHtml_(renderHtml_(body)));
+  SpreadsheetApp.getActiveSpreadsheet().toast("Sent to you only.", "Newsletter");
+}
+
+function showStoryLibrary() {
+  var today = dayString_(new Date()), colors = { ready: "#4f7a3a", sent: "#8a8a8a", sending: "#b07a1e" };
+  colors[WITH_MONTHLY] = "#b07a1e";
+  var cards = stories_().map(function (story) {
+    var color = colors[story.status] || "#a8452f";
+    var past = story.day && story.day < today ? "opacity:.6;" : "";
+    return '<div style="' + past + 'margin:0 0 24px;padding:16px 20px;background:#fbf7f0;border:1px solid #e6dccb;border-radius:8px">' +
+      '<p style="margin:0 0 8px;font-size:13px;color:#6d5848">' + escapeHtml_(story.day || "no date") +
+      ' &middot; <span style="color:' + color + ';font-weight:bold">' + escapeHtml_(story.status || "no status") + '</span>' +
+      (story.values[S_THEME] ? ' &middot; about ' + escapeHtml_(story.values[S_THEME]) : '') + '</p>' +
+      renderHtml_(storyBlock_(story.values)) + '</div>';
+  }).join("") || "<p>No stories yet. Add one to the Stories tab.</p>";
+  var html = '<div style="font-family:Georgia,serif;font-size:15px;line-height:1.55;color:#3a2a1e">' +
+    '<p style="font-size:13px;color:#6d5848">Only stories marked <b>ready</b> go out, on their date. Past ones are faded.</p>' + cards + '</div>';
+  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutput(html).setWidth(760).setHeight(720), "Story library");
 }
