@@ -27,7 +27,6 @@ var CONSENT_WORDING = "Send me the upcoming Slavic holidays once a month and a s
 
 // ---- Edit these ------------------------------------------------------------
 
-var ETSY_LINK = "[IZA: Etsy listing link]";
 var VIDEO_LINK = "https://www.youtube.com/watch?v=Mqx5K0wY0Gw"; // the newest full video
 var BUSINESS_DETAILS = "Iza Vene s.p. · slavicfairyofficial@gmail.com";
 
@@ -61,7 +60,6 @@ function welcomeText_() {
   ];
   parts = parts.concat(articleBlock_("Here's something for this time of year:"));
   parts = parts.concat(videoBlock_());
-  parts.push("If you'd like the whole year at once, the full 2027 calendar is on Etsy.\n" + ETSY_LINK);
   parts.push("Stay well,\nIza");
   return parts.join("\n\n");
 }
@@ -366,8 +364,7 @@ function routineAction_(params) {
       return {
         ok: true, found: !!row, status: row ? row.values[M_STATUS] : "",
         version: row ? row.values[M_VERSION] : 0, subject: row ? row.values[M_SUBJECT] : "",
-        body: row ? row.values[M_BODY] : "", lastReplyId: row ? String(row.values[M_REPLY]) : "",
-        etsyLink: ETSY_LINK
+        body: row ? row.values[M_BODY] : "", lastReplyId: row ? String(row.values[M_REPLY]) : ""
       };
     }
     if (row && row.values[M_STATUS] === "sent") return { ok: false, error: "already sent" };

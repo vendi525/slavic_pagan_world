@@ -1,0 +1,17 @@
+# Rebuilds the site every morning, so articles with a future date go live on their day.
+# It can also be run by hand from the Actions tab ("Run workflow").
+name: Daily rebuild
+on:
+  schedule:
+    - cron: "15 0 * * *"   # 00:15 UTC = 01:15 Ljubljana in winter, 02:15 in summer
+  workflow_dispatch:
+permissions:
+  pages: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask GitHub Pages to rebuild
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
+        env:
+          GH_TOKEN: ${{ github.token }}
