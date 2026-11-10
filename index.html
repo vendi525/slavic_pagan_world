@@ -25,6 +25,12 @@ layout: default
 
 <section class="section about-strip">
   <h2 class="visually-hidden">Latest video</h2>
+  {% assign video = site.data.latest_video %}
+  {% if video.id %}
+  {% include youtube.html id=video.id title=video.title image="/assets/images/latest-video.jpg" %}
+  <p class="video-caption">Latest video: <a href="https://www.youtube.com/watch?v={{ video.id }}">{{ video.title }}</a></p>
+  {% else %}
   {% include youtube.html playlist=site.data.links.youtube_videos title="Latest video from my YouTube channel" %}
+  {% endif %}
   <p><a href="{{ site.data.links.social[0].url }}">Follow my Slavic slow living channel on YouTube</a></p>
 </section>

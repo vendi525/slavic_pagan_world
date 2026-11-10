@@ -1,4 +1,6 @@
-# Rebuilds the site every morning, so articles with a future date go live on their day.
+# Runs every morning:
+# 1. saves the newest YouTube video to the home page, if there is a new one
+# 2. rebuilds the site, so articles with a future date go live on their day
 # It can also be run by hand from the Actions tab ("Run workflow").
 name: Daily rebuild
 on:
@@ -6,11 +8,24 @@ on:
     - cron: "15 0 * * *"   # 00:15 UTC = 01:15 Ljubljana in winter, 02:15 in summer
   workflow_dispatch:
 permissions:
+  contents: write
   pages: write
 jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Save the newest YouTube video
+        continue-on-error: true   # if YouTube is down, still rebuild
+        run: |
+          python3 tools/update_latest_video.py
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+            git add _data/latest_video.yml assets/images/latest-video.jpg
+            git commit -m "Show the newest YouTube video"
+            git push
+          fi
       - name: Ask GitHub Pages to rebuild
         run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
         env:

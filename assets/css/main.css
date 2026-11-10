@@ -455,6 +455,12 @@ a:hover { color: var(--accent-hover); }
   overflow: hidden;
 }
 .video-note { margin: 0; color: var(--muted); font-size: 0.875rem; }
+.video-has-image { position: relative; }
+.video-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-has-image .video-play { position: relative; z-index: 1; background: var(--accent); color: var(--ink); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); }
+.video-has-image .video-play:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.video-has-image .video-note { position: absolute; z-index: 1; bottom: var(--space-1); color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8); }
+.video-caption { margin-top: calc(-1 * var(--space-2)); }
 .video iframe { width: 100%; height: 100%; border: 0; }
 
 /* Cookie banner */

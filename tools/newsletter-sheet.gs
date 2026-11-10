@@ -27,41 +27,109 @@ var CONSENT_WORDING = "Send me the upcoming Slavic holidays once a month and a s
 
 // ---- Edit these ------------------------------------------------------------
 
-var VIDEO_LINK = "https://www.youtube.com/watch?v=Mqx5K0wY0Gw"; // the newest full video
+var VIDEO_LINK = "https://www.youtube.com/watch?v=Mqx5K0wY0Gw"; // only used if YouTube can't be reached
 var BUSINESS_DETAILS = "Iza Vene s.p. · slavicfairyofficial@gmail.com";
 
-// The article for this season, shown in both emails. Leave empty until there is one.
-var ARTICLE_TITLE = "";
-var ARTICLE_LINK = "";
+// Every email ends with the newest article and the newest video, looked up
+// when the email goes out, so they stay current by themselves.
+var SITE_FEED = "https://slavicpaganworld.com/feed.xml";
+var YOUTUBE_FEED = "https://www.youtube.com/feeds/videos.xml?playlist_id=UULFFQIPSgAB4ixVkAamAupKyQ"; // long videos only, no Shorts
 
 var WELCOME_SUBJECT = "welcome to the old Slavic year 🍂";
 
-// The routine keeps the latest links here, so the welcome email stays current.
-// The values above are only used until it has saved some.
+// The last links found are kept here, in case a feed can't be reached later.
 function setting_(name, fallback) {
   return PropertiesService.getScriptProperties().getProperty(name) || fallback;
 }
 
-function articleBlock_(intro) {
-  var link = setting_("ARTICLE_LINK", ARTICLE_LINK);
-  if (!link) return [];
-  return [intro + "\n" + setting_("ARTICLE_TITLE", ARTICLE_TITLE) + "\n" + link];
+function fetchXml_(url) {
+  var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
+  if (response.getResponseCode() !== 200) throw new Error(url + " returned " + response.getResponseCode());
+  return XmlService.parse(response.getContentText()).getRootElement();
 }
 
-function videoBlock_() {
-  return ["For a glimpse of my lifestyle, watch my most recent YouTube video.\n" + setting_("VIDEO_LINK", VIDEO_LINK)];
+// Newest entry in an Atom feed, as { title, link, image }.
+function newestEntry_(url, readImage) {
+  var root = fetchXml_(url), atom = root.getNamespace();
+  var entries = root.getChildren("entry", atom);
+  if (!entries.length) return null;
+  entries.sort(function (a, b) { return a.getChildText("published", atom) < b.getChildText("published", atom) ? 1 : -1; });
+  var entry = entries[0], link = entry.getChildren("link", atom).filter(function (l) {
+    return !l.getAttribute("rel") || l.getAttribute("rel").getValue() === "alternate";
+  })[0];
+  return { title: entry.getChildText("title", atom).trim(), link: link ? link.getAttribute("href").getValue() : "", image: readImage(entry) };
+}
+
+function latestArticle_() {
+  try {
+    var article = newestEntry_(SITE_FEED, function (entry) {
+      var thumb = entry.getChild("thumbnail", XmlService.getNamespace("media", "http://search.yahoo.com/mrss/"));
+      return thumb ? thumb.getAttribute("url").getValue() : "";
+    });
+    if (article && article.link) {
+      PropertiesService.getScriptProperties().setProperty("LATEST_ARTICLE", JSON.stringify(article));
+      return article;
+    }
+  } catch (error) { console.log("Site feed: " + error); }
+  var saved = setting_("LATEST_ARTICLE", "");
+  return saved ? JSON.parse(saved) : null;
+}
+
+function latestVideo_() {
+  try {
+    var video = newestEntry_(YOUTUBE_FEED, function (entry) {
+      var id = entry.getChildText("videoId", XmlService.getNamespace("yt", "http://www.youtube.com/xml/schemas/2015"));
+      var big = "https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg";
+      return UrlFetchApp.fetch(big, { muteHttpExceptions: true }).getResponseCode() === 200 ? big : "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg";
+    });
+    if (video && video.link) {
+      PropertiesService.getScriptProperties().setProperty("LATEST_VIDEO", JSON.stringify(video));
+      return video;
+    }
+  } catch (error) { console.log("YouTube feed: " + error); }
+  var saved = setting_("LATEST_VIDEO", "");
+  return saved ? JSON.parse(saved) : { title: "My newest video", link: VIDEO_LINK, image: "" };
+}
+
+// The ending of every email: a line, the newest article, a line, the newest video.
+// Looked up at most once an hour.
+function latestText_() {
+  var cache = CacheService.getScriptCache(), cached = cache.get("LATEST_TEXT");
+  if (cached) return cached;
+  var parts = [], article = latestArticle_(), video = latestVideo_();
+  if (article) {
+    parts.push("---", "**New on the wiki**");
+    if (article.image) parts.push("[[picture|" + article.image + "|" + article.link + "]]");
+    parts.push("[" + linkText_(article.title) + "](" + article.link + ")");
+  }
+  if (video) {
+    parts.push("---", "**My latest YouTube video**");
+    if (video.image) parts.push("[[picture|" + video.image + "|" + video.link + "]]");
+    parts.push("[" + linkText_(video.title) + "](" + video.link + ")");
+  }
+  var text = parts.join("\n\n");
+  cache.put("LATEST_TEXT", text, 3600);
+  return text;
+}
+
+function linkText_(title) {
+  return String(title).replace(/[\[\]]/g, "");
+}
+
+// Adds the ending to an email's text.
+function withLatest_(body) {
+  var latest = latestText_();
+  return latest ? String(body).replace(/\s+$/, "") + "\n\n" + latest : String(body);
 }
 
 function welcomeText_() {
   var parts = [
     "Hi lovely soul, and welcome.",
     "I'm Iza. I make slow videos about Slavic folklore, seasonal rituals and small handmade things, and I design the Slavic Pagan Calendar.",
-    "Once a month I'll send you the Slavic pagan holidays coming up, and once a week an ancient anecdote for you to contemplate."
+    "Once a month I'll send you the Slavic pagan holidays coming up, and once a week an ancient anecdote for you to contemplate.",
+    "Stay well,\nIza"
   ];
-  parts = parts.concat(articleBlock_("Here's something for this time of year:"));
-  parts = parts.concat(videoBlock_());
-  parts.push("Stay well,\nIza");
-  return parts.join("\n\n");
+  return withLatest_(parts.join("\n\n"));
 }
 
 // ---- Sheet columns ---------------------------------------------------------
@@ -106,6 +174,7 @@ function sendEmail_(to, subject, text, code) {
 
 // Emails are written in a small format:
 //   # Heading        **bold**        [[Button text|https://link]]        [link text](https://link)
+//   ---  a separator line        [[picture|https://image|https://link]]  a picture that links
 //   Lines starting with a number are the holiday list.
 function escapeHtml_(text) {
   return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -125,6 +194,11 @@ function inlineHtml_(line) {
 }
 
 function renderLine_(line) {
+  if (/^-{3,}$/.test(line)) return '<hr style="margin:32px 0;border:0;border-top:1px solid #d8c9b4">';
+  var picture = line.match(/^\[\[picture\|(https?:\/\/[^|\s]+)\|(https?:\/\/[^\]\s]+)\]\]$/);
+  if (picture) {
+    return '<p style="margin:0 0 8px"><a href="' + escapeHtml_(picture[2]) + '"><img src="' + escapeHtml_(picture[1]) + '" alt="" width="520" style="display:block;width:100%;max-width:520px;height:auto;border:0;border-radius:8px"></a></p>';
+  }
   var button = line.match(/^\[\[(.+?)\|(.+)\]\]$/);
   if (button && /^https?:\/\//.test(button[2])) {
     return '<p style="margin:24px 0"><a href="' + escapeHtml_(button[2]) + '" style="display:inline-block;padding:12px 24px;background:#ebcb8b;color:#3a2a1e;border-radius:8px;text-decoration:none;font-weight:bold">' + escapeHtml_(button[1]) + '</a></p>';
@@ -146,7 +220,7 @@ function wrapHtml_(inner) {
 }
 
 function plainText_(text) {
-  return String(text).replace(/^# /gm, "").replace(/\*\*/g, "").replace(/\[\[(.+?)\|(.+)\]\]/g, "$1: $2")
+  return String(text).replace(/^\[\[picture\|.*\]\]\n*/gm, "").replace(/^-{3,}$/gm, "* * *").replace(/^# /gm, "").replace(/\*\*/g, "").replace(/\[\[(.+?)\|(.+)\]\]/g, "$1: $2")
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, "$1: $2");
 }
 
@@ -336,6 +410,7 @@ function missingNote_(body) {
 }
 
 function sendReview_(month, version, subject, body, note) {
+  body = withLatest_(body);
   var isTest = month.indexOf("TEST") === 0;
   var intro = (isTest ? "This is a TEST and can never reach subscribers.\n\n" : "") +
     "Reply with what you want changed, or reply with just the word confirmed." +
@@ -382,14 +457,6 @@ function routineAction_(params) {
       var values = [month, "draft", version, subject, body, String(params.replyId || ""), new Date(), "", "", ""];
       if (row) values.forEach(function (value, column) { sheet.getRange(row.number, column + 1).setValue(value); });
       else sheet.appendRow(values);
-      if (month.indexOf("TEST") !== 0) {
-        var properties = PropertiesService.getScriptProperties();
-        if (params.videoLink) properties.setProperty("VIDEO_LINK", String(params.videoLink));
-        if (params.articleLink) {
-          properties.setProperty("ARTICLE_LINK", String(params.articleLink));
-          properties.setProperty("ARTICLE_TITLE", String(params.articleTitle || ""));
-        }
-      }
       sendReview_(month, version, subject, body, String(params.note || ""));
       return { ok: true, version: version };
     }
@@ -444,6 +511,7 @@ function sendScheduledMonthly() {
     return;
   }
 
+  body = withLatest_(body);
   var sheet = sheet_();
   var rows = sheet.getDataRange().getValues();
   var sent = Number(row.values[M_RECIPIENTS]) || 0, remaining = 0;
